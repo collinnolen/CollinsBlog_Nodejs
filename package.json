@@ -1,0 +1,32 @@
+{
+  "name": "collins_blog",
+  "version": "0.0.1",
+  "description": "Simple blog site with added features down the road.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blog",
+    "collin",
+    "nolen"
+  ],
+  "author": "Collin Nolen",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.4",
+    "express-handlebars": "^3.0.0",
+    "express-messages": "^1.0.1",
+    "express-session": "^1.15.5",
+    "express-validator": "^4.1.1",
+    "mongodb": "^2.2.31",
+    "mongoose": "^4.11.11",
+    "passport": "^0.4.0",
+    "passport-http": "^0.3.0",
+    "passport-local": "^1.0.0"
+  }
+}
