@@ -1,1 +1,41 @@
-register
+<div class="register-container">
+
+  <h2>Register</h2>
+
+  {{#if user}}
+    <p>You are already logged in.</p>
+  {{else}}
+
+    {{#if errors}}
+      {{#each errors}}
+        <div class="alert alert-danger">
+          {{msg}}
+        </div>
+      {{/each}}
+    {{/if}}
+
+    <form action="/users/register" method="post">
+      <div class="form-group">
+        <label>First name</label>
+        <input type="text" class="form-control" placeholder="First Name" name="firstname">
+      </div>
+      <div class="form-group">
+        <label>Last name</label>
+        <input type="text" class="form-control" placeholder="Last Name" name="lastname">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="form-control" placeholder="Email" name="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" placeholder="Password" name="password">
+      </div>
+      <div class="form-group">
+        <label>Re enter Password</label>
+        <input type="password" class="form-control" placeholder="Password" name="password2">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  {{/if}}
+</div>
