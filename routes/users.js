@@ -2,8 +2,11 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
+const randomstring = require('randomstring');
 
-var User = require('../models/user.js')
+var User = require('../models/user.js');
+var UnverifiedUser = require('../models/unverifiedUser.js')
+var MailingService = require('../services/mailingService.js');
 
 //register
 router.get('/register', function(req, res){
@@ -33,22 +36,51 @@ router.post('/register', function(req, res){
     });
   }
   else{
-    var newUser = new User({
+    var newUnverifiedUser = new UnverifiedUser({
       first_name: firstname,
       last_name: lastname,
       email: email,
       title: 'Member',
-      password: password
+      password: password,
+      url: randomstring.generate(64)
     });
 
-    User.createUser(newUser, function(err, user){
+    UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
       if(err) throw err;
-      console.log(user);
+      else MailingService.sendVerifingEmail(user);
     });
 
-    req.flash('success_msg', 'You have successfully registered.');
+    req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
     res.redirect('/users/login');
   }
+});
+
+
+router.get('/registerNewUser', function(req, res){
+  var unverifiedUser = UnverifiedUser.getUnverifiedUserByUrl(req.query.url, function(err, user){
+
+    var verifiedUser = new User({
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      title: user.title,
+      password: user.password
+    });
+
+    User.createUser(verifiedUser, function(err, user){
+      if(err) throw err;
+      else{
+        req.flash('success_msg', 'You have successfully verified your account.');
+        res.redirect('/users/login');
+      }
+    });
+
+    UnverifiedUser.removeUnverifiedUserByUrl(req.query.url, function(){
+        if(err) console.log(err);
+        else console.log('Removed UnverifiedUser');
+    });
+
+  });
 });
 
 

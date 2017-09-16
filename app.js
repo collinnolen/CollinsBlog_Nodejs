@@ -1,4 +1,5 @@
- var express = require('express');
+var express = require('express');
+require('dotenv').config({path: '.env'})
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -10,8 +11,10 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/Collins_Blog', {useMongoClient:true});
+mongoose.connect(process.env.DATABASE_URL, {useMongoClient:true});
 var db = mongoose.connection;
+const nodemailer = require('nodemailer');
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -88,3 +91,6 @@ var port = process.env.PORT || 3000;
 app.listen(port, function(){
   console.log("Listening to port " + port);
 });
+
+
+//nodemailer
