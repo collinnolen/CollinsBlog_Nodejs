@@ -36,23 +36,34 @@ router.post('/register', function(req, res){
     });
   }
   else{
-    var newUnverifiedUser = new UnverifiedUser({
-      first_name: firstname,
-      last_name: lastname,
-      email: email,
-      title: 'Member',
-      password: password,
-      url: randomstring.generate(64)
-    });
 
-    UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
-      if(err) throw err;
-      else MailingService.sendVerifingEmail(user);
-    });
+    User.getUserByEmail(email, function(err, user){
 
-    req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
-    res.redirect('/users/login');
-  }
+      if(!user){
+        var newUnverifiedUser = new UnverifiedUser({
+          first_name: firstname,
+          last_name: lastname,
+          email: email,
+          title: 'member',
+          password: password,
+          url: randomstring.generate(64)
+        });
+
+        UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
+          if(err) throw err;
+          else MailingService.sendVerifingEmail(user);
+        });
+
+        req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
+        res.redirect('/users/login');
+      }
+      else{
+        req.flash('error_msg', 'The email you wish to use is already in use. Please use a different email address.');
+        res.redirect('/users/login');
+      }
+
+    });
+  }//end else
 });
 
 

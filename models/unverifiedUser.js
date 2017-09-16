@@ -25,12 +25,12 @@ var UnverifiedUserSchema = mongoose.Schema({
 var UnverifiedUser = module.exports = mongoose.model('UnverifiedUser', UnverifiedUserSchema);
 
 module.exports.createUnverifiedUser = function(newUnverifiedUser, callback){
-  bcrypt.genSalt(10, function(err, salt){
-    bcrypt.hash(newUnverifiedUser.password , salt, function(err, hash){
-      newUnverifiedUser.password = hash;
+  // bcrypt.genSalt(10, function(err, salt){
+  //   bcrypt.hash(newUnverifiedUser.password , salt, function(err, hash){
+  //     newUnverifiedUser.password = hash;
       newUnverifiedUser.save(callback);
-    });
-  });
+  //   });
+  // });
 }//end createUser
 
 
