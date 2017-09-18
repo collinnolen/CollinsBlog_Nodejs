@@ -86,8 +86,41 @@ body {
   margin-top: 15px;
 }
 
-
-
 .login-container{
   margin: 0 auto;
+}
+
+.main-blog-content{
+  float: left;
+
+}
+
+.recent-blog-posts{
+
+  float: right;
+
+}
+
+.recent-post-container{
+  max-width: 100%;
+  font-size: 12px;
+
+}
+
+.recent-blog-list{
+  list-style: none;
+  padding:0;
+}
+
+.recent-post-container{
+  border-top:1px;
+  border-top-style:solid;
+  border-color: black;
+  background-color: #e9e9e9
+}
+
+.recent-post-container .author, .title{
+  overflow: hidden;
+  text-align: left;
+  padding:2px;
 }

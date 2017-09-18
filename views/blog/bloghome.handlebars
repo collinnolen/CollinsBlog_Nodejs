@@ -1,10 +1,18 @@
 <h2>BlogHome</h2>
 <p>Blog home pages</p>
 
-
-<div class="" id="recent_blogs">
-  {{#each blogs}}
-    <h3>{{post_title}}</h3>
-    <p>{{post_author}}</p></br>
-  {{/each}}
+<div class="col-md-9 main-blog-content">
+  <div class="card">
+    hi
+  </div>
+</div>
+<div class="col-md-3 recent-blog-posts" id="recent_blogs">
+  <ul class="recent-blog-list">
+    {{#each blogs}}
+      <li class="recent-post-container">
+        <div class="title"><a href="blogs/{{post_id}}">{{post_title}}</a></div>
+        <div class="author">-{{post_author}}</div>
+      </li>
+    {{/each}}
+  </ul>
 </div>

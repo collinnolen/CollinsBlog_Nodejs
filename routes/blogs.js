@@ -18,7 +18,7 @@ router.get('/', function(req, res){
 router.get('/:id', function(req, res){
   Blog.getBlogByPostId(req.params.id, function(err, blog){
     if(blog){
-      res.render('blogPage', {blog: blog});
+      res.render('blog/blogPage', {blog: blog});
     }
     else{
       req.flash('error_msg', 'You need to be logged in to make a blog post.');
