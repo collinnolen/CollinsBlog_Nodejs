@@ -9,14 +9,27 @@ var BlogSchema = mongoose.Schema({
     type: String
   },
   post_img:{
-    type: String
-  },
-  title:{
     data: Buffer, contentType: String
   },
-  password:{
+  post_title:{
+    type: String
+  },
+  post_body:{
     type: String
   }
 }, {collection: 'posts'});
 
-var Blog = mongoose.model('Blog', BlogSchema);
+var Blog = module.exports = mongoose.model('Blog', BlogSchema);
+
+module.exports.createBlog = function(newBlog, callback){
+  newBlog.save(callback);
+}
+
+module.exports.getBlogByPostId = function(postid, callback){
+  var query = {post_id: postid};
+  Blog.findOne(query, callback);
+}
+
+module.exports.getRecentBlogs = function(numberOfBlogsToReturn, callback){
+  Blog.find({},null,{ limit: numberOfBlogsToReturn,  sort:{'post_id': -1} }, callback );
+}

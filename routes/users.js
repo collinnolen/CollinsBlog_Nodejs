@@ -8,9 +8,10 @@ var User = require('../models/user.js');
 var UnverifiedUser = require('../models/unverifiedUser.js')
 var MailingService = require('../services/mailingService.js');
 
+
 //register
 router.get('/register', function(req, res){
-  res.render('register');
+  res.render('user/register');
 });
 
 //register
@@ -31,7 +32,7 @@ router.post('/register', function(req, res){
   var errors = req.validationErrors();
 
   if(errors){
-    res.render('register',{
+    res.render('user/register',{
       errors:errors
     });
   }
@@ -88,7 +89,6 @@ router.get('/registerNewUser', function(req, res){
 
     UnverifiedUser.removeUnverifiedUserByUrl(req.query.url, function(){
         if(err) console.log(err);
-        else console.log('Removed UnverifiedUser');
     });
 
   });
@@ -97,7 +97,7 @@ router.get('/registerNewUser', function(req, res){
 
 //Login
 router.get('/login', function(req, res){
-  res.render('login');
+  res.render('user/login');
 });
 
 
@@ -148,7 +148,7 @@ router.get('/logout', ensureAuthenticated, function(req, res){
 
 
 router.get('/dashboard', ensureAuthenticated, function(req, res){
-  res.render('dashboard');
+  res.render('user/dashboard/dashboard');
 })
 
 function ensureAuthenticated(req, res, next){
