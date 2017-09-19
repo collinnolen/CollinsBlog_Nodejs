@@ -8,6 +8,9 @@ var UnverifiedUserSchema = mongoose.Schema({
   last_name:{
     type: String
   },
+  username:{
+    type: String
+  },
   email:{
     type: String
   },

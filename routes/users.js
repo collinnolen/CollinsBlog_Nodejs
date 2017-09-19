@@ -9,12 +9,44 @@ var UnverifiedUser = require('../models/unverifiedUser.js')
 var MailingService = require('../services/mailingService.js');
 
 
-//register
+//promises
+let getUserByEmail = function(email){
+  return new Promise(function(resolve, reject){
+    User.getUserByEmail(email, function(err, user){
+      if(err)
+        reject();
+      else{
+        if(user == null){
+          //console.log('null email');
+          resolve('null');
+        }
+        else
+          resolve(user);
+      }
+    });
+  });
+}
+
+let getUserByUsername = function(username){
+  return new Promise(function(resolve, reject){
+    User.getUserByUsername(username, function(err, user){
+      if(err)
+        reject();
+      else{
+        if(user == null)
+          resolve('null');
+        else
+          resolve(user);
+      }
+    });
+  });
+}
+
+//register router functions
 router.get('/register', function(req, res){
   res.render('user/register');
 });
 
-//register
 router.post('/register', function(req, res){
   var firstname = req.body.firstname;
   var lastname = req.body.lastname;
@@ -39,37 +71,43 @@ router.post('/register', function(req, res){
     });
   }
   else{
+    Promise.all([getUserByEmail(email), getUserByUsername(username)])
+      .then(function(values){
+        console.log(values);
+        if(values[0] === 'null' && values[1] === 'null'){
+          var newUnverifiedUser = new UnverifiedUser({
+            first_name: firstname,
+            last_name: lastname,
+            username: username,
+            email: email,
+            title: 'member',
+            password: password,
+            url: randomstring.generate(64)
+          });
 
-    User.getUserByEmail(email, function(err, user){
+          UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
+            if(err) throw err;
+            else MailingService.sendVerifingEmail(user);
+          });
 
-      if(!user){
-        var newUnverifiedUser = new UnverifiedUser({
-          first_name: firstname,
-          last_name: lastname,
-          username: username,
-          email: email,
-          title: 'member',
-          password: password,
-          url: randomstring.generate(64)
-        });
+          req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
+          res.redirect('/users/login');
+        }
+        else if(values[0] === 'null'){
+          req.flash('error_msg', 'The username you wish to use is already in use. Please use a different username.');
+          res.redirect('/users/register');
+        }
+        else{
+          req.flash('error_msg', 'The email you wish to use is already in use. Please use a different email address.');
+          res.redirect('/users/register');
 
-        UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
-          if(err) throw err;
-          else MailingService.sendVerifingEmail(user);
-        });
-
-        req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
-        res.redirect('/users/login');
-      }
-      else{
-        req.flash('error_msg', 'The email you wish to use is already in use. Please use a different email address.');
-        res.redirect('/users/login');
-      }
-
-    });
-  }//end else
+        }
+      })
+      .catch(function(err){
+        console.log(err);
+      });
+  }
 });
-
 
 router.get('/registerNewUser', function(req, res){
   var unverifiedUser = UnverifiedUser.getUnverifiedUserByUrl(req.query.url, function(err, user){
@@ -99,12 +137,43 @@ router.get('/registerNewUser', function(req, res){
 });
 
 
-//Login
+//Login router functions
 router.get('/login', function(req, res){
   res.render('user/login');
 });
 
+router.post('/login',
+  passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login', failureFlash: true}),
+  function(req, res){
+    res.redirect('/');
+  });
 
+
+//logout fucntions
+router.get('/logout', ensureAuthenticated, function(req, res){
+  req.logout();
+  req.flash('success_msg', 'You are logged out.')
+  res.redirect('/users/login');
+});
+
+
+//Dashboard router functions
+router.get('/dashboard', ensureAuthenticated, function(req, res){
+  res.render('user/dashboard/dashboard');
+})
+
+function ensureAuthenticated(req, res, next){
+    if(req.isAuthenticated()){
+      return next();
+    }
+    else{
+      req.flash('error_msg', 'You are not logged in');
+      res.redirect('/users/login');
+    }
+}
+
+
+//passport functions
 passport.use(new LocalStrategy(
   function(email, password, done) {
     User.getUserByEmail(email, function(err, user){
@@ -125,7 +194,6 @@ passport.use(new LocalStrategy(
   });
 }));
 
-
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -135,35 +203,6 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
-
-
-router.post('/login',
-  passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login', failureFlash: true}),
-  function(req, res){
-    res.redirect('/');
-  });
-
-//logout
-router.get('/logout', ensureAuthenticated, function(req, res){
-  req.logout();
-  req.flash('success_msg', 'You are logged out.')
-  res.redirect('/users/login');
-});
-
-
-router.get('/dashboard', ensureAuthenticated, function(req, res){
-  res.render('user/dashboard/dashboard');
-})
-
-function ensureAuthenticated(req, res, next){
-    if(req.isAuthenticated()){
-      return next();
-    }
-    else{
-      req.flash('error_msg', 'You are not logged in');
-      res.redirect('/users/login');
-    }
-}
 
 
 module.exports = router;
