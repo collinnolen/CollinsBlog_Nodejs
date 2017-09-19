@@ -3,6 +3,9 @@ var router = express.Router();
 const microtime = require('microtime');
 
 var Blog = require('../models/blog.js');
+var _Comment = require('../models/comment.js');
+
+const numberOfCommentsToShow = 10;
 
 //Get home
 router.get('/', function(req, res){
@@ -18,7 +21,9 @@ router.get('/', function(req, res){
 router.get('/:id', function(req, res){
   Blog.getBlogByPostId(req.params.id, function(err, blog){
     if(blog){
-      res.render('blog/blogPage', {blog: blog});
+      _Comment.getBlogComments(blog.post_id, numberOfCommentsToShow, function(err, comments){
+        res.render('blog/blogPage', {blog: blog, comments: comments});
+      });
     }
     else{
       req.flash('error_msg', 'You need to be logged in to make a blog post.');
@@ -30,12 +35,13 @@ router.get('/:id', function(req, res){
 //post a blog
 router.post('/', function(req, res){
   if(req.user != null){
-    var id = microtime.now();
+    var id = microtime.now().toString(36); //base 36 to save url space.
     var author = req.user.first_name + ' ' + req.user.last_name;
     var title = req.body.title;
     var body = req.body.body;
 
     req.checkBody('body', 'Body of blog post is required.').notEmpty();
+    req.checkBody('title', 'Blog post must have a title.').notEmpty();
 
     var errors = req.validationErrors();
 

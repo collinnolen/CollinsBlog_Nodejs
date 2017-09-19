@@ -19,6 +19,7 @@ const nodemailer = require('nodemailer');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var blogs = require('./routes/blogs');
+var comments = require('./routes/comments');
 
 // // Init Application
  var app = express();
@@ -82,9 +83,11 @@ app.use(function(req, res, next){
   next();
 });
 
+//set routes
 app.use('/', routes);
 app.use('/users', users);
 app.use('/blogs', blogs);
+app.use('/comments', comments);
 
 //set Port
 var port = process.env.PORT || 3000;

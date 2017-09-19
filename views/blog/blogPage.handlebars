@@ -1,3 +1,23 @@
-<h2>Blog Page</h2>
 <h2>{{blog.post_title}}</h2>
 <p>{{blog.post_body}}</p>
+
+
+<div class="">
+  <ul class="recent-blog-list">
+    {{#each comments}}
+      <li class="recent-post-container card">
+        <div class="comment-body">{{comment_body}}</div>
+        <div class="comment-author">-{{comment_author}},  <span>posted on {{comment_timeposted}}</span></div>
+      </li>
+    {{/each}}
+  </ul>
+</div>
+
+
+<form action="/comments/{{blog.post_id}}"+ method="post">
+  <div class="form-group">
+    <label>Comment:</label>
+    <textarea type="text" class="form-control" name="comment" placeholder="Comment" ></textarea>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
