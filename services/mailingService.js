@@ -15,12 +15,7 @@ var mailer = nodemailer.createTransport({
   }
 });
 
-
-function queryStringBuilder(user){
-  return process.env.SITE_URL + '/registerNewUser?'
-}
-
-
+//sends email to specified email contianing link to verify an account.
 module.exports.sendVerifingEmail = function(user, callback){
   var url = process.env.SITE_URL + '/users/registerNewUser?url=' + user.url;
 

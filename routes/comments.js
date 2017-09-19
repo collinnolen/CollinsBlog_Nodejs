@@ -4,8 +4,10 @@ const microtime = require('microtime');
 
 var _Comment = require('../models/comment.js');
 
+// posts comment to blog post with :id
 router.post('/:id', ensureAuthenticated, function(req, res){
   var comment_timeposted = microtime.now();
+  var comment_username = req.user.username;
   var comment_body = req.body.comment;
   var comment_author = req.user.first_name + ' ' + req.user.last_name;
 
@@ -22,6 +24,7 @@ router.post('/:id', ensureAuthenticated, function(req, res){
     var newComment = new _Comment({
       post_id: req.params.id,
       comment_timeposted: comment_timeposted,
+      comment_username: comment_username,
       comment_author: comment_author,
       comment_body: comment_body
     });
@@ -34,7 +37,7 @@ router.post('/:id', ensureAuthenticated, function(req, res){
   }
 });
 
-
+//ensures authentication
 function ensureAuthenticated(req, res, next){
     if(req.isAuthenticated()){
       return next();

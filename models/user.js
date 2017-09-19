@@ -12,6 +12,9 @@ var UserSchema = mongoose.Schema({
   last_name:{
     type: String
   },
+  username:{
+    type: String
+  },
   email:{
     type: String
   },
@@ -43,6 +46,11 @@ module.exports.getUserByEmail = function(email, callback){
   var query = {email: email};
   User.findOne(query, callback);
 }//end getUserByEmail
+
+module.exports.getUserByUsername = function(username, callback){
+  var query = {username: username};
+  User.findOne(query, callback);
+}//end getUserByUsername
 
 module.exports.comparePassword = function(canidatePass, hash, callback){
   bcrypt.compare(canidatePass, hash, function(err, isMatch) {

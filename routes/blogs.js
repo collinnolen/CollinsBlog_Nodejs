@@ -17,7 +17,7 @@ router.get('/', function(req, res){
   //res.render('bloghome');
 });
 
-
+// get blog post with :id
 router.get('/:id', function(req, res){
   Blog.getBlogByPostId(req.params.id, function(err, blog){
     if(blog){
@@ -37,6 +37,7 @@ router.post('/', function(req, res){
   if(req.user != null){
     var id = microtime.now().toString(36); //base 36 to save url space.
     var author = req.user.first_name + ' ' + req.user.last_name;
+    var username = req.user.username;
     var title = req.body.title;
     var body = req.body.body;
 
@@ -54,6 +55,7 @@ router.post('/', function(req, res){
       var newBlogPost= new Blog({
         post_id : id,
         post_author : author,
+        post_username : username,
         //post_img : img,
         post_title : title,
         post_body : body
@@ -69,10 +71,6 @@ router.post('/', function(req, res){
     req.flash('error_msg', 'You need to be logged in to make a blog post.');
     res.redirect('/users/login');
   }
-
-
-
-
 });
 
 module.exports = router;

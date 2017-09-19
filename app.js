@@ -48,10 +48,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
-
 // //Validator middleware
 app.use(expressValidator({
   errorFormatter: function(param, msg, value){
@@ -70,11 +66,10 @@ app.use(expressValidator({
 }
 }));
 
-
 // //Connect Flash
 app.use(flash());
 
-
+// globals
 app.use(function(req, res, next){
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
@@ -96,6 +91,3 @@ var port = process.env.PORT || 3000;
 app.listen(port, function(){
   console.log("Listening to port " + port);
 });
-
-
-//nodemailer

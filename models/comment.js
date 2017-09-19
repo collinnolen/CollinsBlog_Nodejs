@@ -8,6 +8,9 @@ var CommentSchema = mongoose.Schema({
   comment_timeposted:{
     type: String
   },
+  comment_username:{
+    type: String
+  },
   comment_author:{
     type: String
   },

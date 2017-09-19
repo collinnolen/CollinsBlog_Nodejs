@@ -8,6 +8,9 @@ var BlogSchema = mongoose.Schema({
   post_author:{
     type: String
   },
+  post_username:{
+    type: String
+  },
   post_img:{
     data: Buffer, contentType: String
   },

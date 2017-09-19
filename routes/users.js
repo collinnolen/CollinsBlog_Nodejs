@@ -18,12 +18,14 @@ router.get('/register', function(req, res){
 router.post('/register', function(req, res){
   var firstname = req.body.firstname;
   var lastname = req.body.lastname;
+  var username = req.body.username;
   var email = req.body.email;
   var password = req.body.password;
   var password_2 = req.body.password2;
 
   req.checkBody('firstname', 'First Name is required').notEmpty();
   req.checkBody('lastname', 'First Name is required').notEmpty();
+  req.checkBody('username', 'A username is required').notEmpty();
   req.checkBody('email', 'First Name is required').notEmpty();
   req.checkBody('email', 'Invalid Email address').isEmail();
   req.checkBody('password', 'Password is required').notEmpty();
@@ -44,6 +46,7 @@ router.post('/register', function(req, res){
         var newUnverifiedUser = new UnverifiedUser({
           first_name: firstname,
           last_name: lastname,
+          username: username,
           email: email,
           title: 'member',
           password: password,
@@ -74,6 +77,7 @@ router.get('/registerNewUser', function(req, res){
     var verifiedUser = new User({
       first_name: user.first_name,
       last_name: user.last_name,
+      username: user.username,
       email: user.email,
       title: user.title,
       password: user.password
