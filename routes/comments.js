@@ -2,10 +2,12 @@ var express = require('express');
 var router = express.Router();
 const microtime = require('microtime');
 
+const Auth = require('../middleware/authentication.js');
+
 var _Comment = require('../models/comment.js');
 
 // posts comment to blog post with :id
-router.post('/:id', ensureAuthenticated, function(req, res){
+router.post('/:id', Auth.ensureAuthenticated, function(req, res){
   var comment_timeposted = microtime.now();
   var comment_username = req.user.username;
   var comment_body = req.body.comment;
@@ -36,17 +38,5 @@ router.post('/:id', ensureAuthenticated, function(req, res){
     });
   }
 });
-
-//ensures authentication
-function ensureAuthenticated(req, res, next){
-    if(req.isAuthenticated()){
-      return next();
-    }
-    else{
-      req.flash('error_msg', 'You are not logged in');
-      res.redirect('/users/login');
-    }
-}
-
 
 module.exports = router;

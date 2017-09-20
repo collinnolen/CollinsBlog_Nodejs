@@ -5,7 +5,11 @@
   {{#if user}}
     <p>You are already logged in.</p>
   {{else}}
+    {{#if query}}
+    <form action="/users/login{{query}}" method="post">
+    {{else}}
     <form action="/users/login" method="post">
+    {{/if}}
       <div class="form-group">
         <label>Login Email</label>
         <input type="text" class="form-control" name="username" placeholder="Email" >

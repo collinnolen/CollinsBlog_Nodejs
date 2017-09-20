@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const microtime = require('microtime');
 
+const Auth = require('../middleware/authentication.js');
+
 var Blog = require('../models/blog.js');
 var _Comment = require('../models/comment.js');
 
@@ -13,8 +15,6 @@ router.get('/', function(req, res){
   Blog.getRecentBlogs(numberOfBlogsToReturn, function(err, blogs){
     res.render('blog/bloghome', {blogs: blogs});
   });
-
-  //res.render('bloghome');
 });
 
 // get blog post with :id
@@ -33,7 +33,7 @@ router.get('/:id', function(req, res){
 });
 
 //post a blog
-router.post('/', function(req, res){
+router.post('/', Auth.ensureAuthenticated, function(req, res){
   if(req.user != null){
     var id = microtime.now().toString(36); //base 36 to save url space.
     var author = req.user.first_name + ' ' + req.user.last_name;

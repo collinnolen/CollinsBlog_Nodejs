@@ -4,9 +4,13 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local');
 const randomstring = require('randomstring');
 
+const QueryUtility = require('../modules/queryUtility.js');
+const Auth = require('../middleware/authentication.js');
+
 var User = require('../models/user.js');
+var Blog = require('../models/blog.js');
 var UnverifiedUser = require('../models/unverifiedUser.js')
-var MailingService = require('../services/mailingService.js');
+var Mailer = require('../modules/mailer.js');
 
 
 //promises
@@ -87,7 +91,7 @@ router.post('/register', function(req, res){
 
           UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
             if(err) throw err;
-            else MailingService.sendVerifingEmail(user);
+            else Mailer.sendVerifingEmail(user);
           });
 
           req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
@@ -139,18 +143,29 @@ router.get('/registerNewUser', function(req, res){
 
 //Login router functions
 router.get('/login', function(req, res){
-  res.render('user/login');
+  if(req.query.redirect === undefined)
+    res.render('user/login');
+  else{
+
+    res.render('user/login',{query : '?redirect='+req.query.redirect});
+  }
 });
 
 router.post('/login',
-  passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login', failureFlash: true}),
+  passport.authenticate('local', {failureRedirect:'/users/login', failureFlash: true}),
   function(req, res){
-    res.redirect('/');
+    if(req.query.redirect === undefined){
+      res.redirect('/');
+    }
+    else {
+      var redirectUrl = QueryUtility.redirectDecodeQueryBuilder(req.query.redirect);
+      res.redirect('/users' + redirectUrl);
+    }
   });
 
 
 //logout fucntions
-router.get('/logout', ensureAuthenticated, function(req, res){
+router.get('/logout', Auth.ensureAuthenticated, function(req, res){
   req.logout();
   req.flash('success_msg', 'You are logged out.')
   res.redirect('/users/login');
@@ -158,20 +173,27 @@ router.get('/logout', ensureAuthenticated, function(req, res){
 
 
 //Dashboard router functions
-router.get('/dashboard', ensureAuthenticated, function(req, res){
+router.get('/dashboard', Auth.ensureAuthenticated, function(req, res){
   res.render('user/dashboard/dashboard');
-})
+});
 
-function ensureAuthenticated(req, res, next){
-    if(req.isAuthenticated()){
-      return next();
-    }
-    else{
-      req.flash('error_msg', 'You are not logged in');
-      res.redirect('/users/login');
-    }
-}
 
+
+router.get('/dashboard/newblog', Auth.ensureAuthenticated, function(req, res){
+  res.render('user/dashboard/createBlog');
+});
+
+router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
+  var page;
+  if(!req.query.page)
+    page = 0;
+  else
+    page = req.query.page;
+
+  Blog.getUserBlogsByPage(req.user.username, 10, page, function(err, blogs){
+    res.render('user/dashboard/myblogs', {blogs: blogs});
+  });
+});
 
 //passport functions
 passport.use(new LocalStrategy(

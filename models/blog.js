@@ -36,3 +36,13 @@ module.exports.getBlogByPostId = function(postid, callback){
 module.exports.getRecentBlogs = function(numberOfBlogsToReturn, callback){
   Blog.find({},null,{ limit: numberOfBlogsToReturn,  sort:{'post_id': -1} }, callback );
 }
+
+module.exports.getUserBlogsByPage = function(username, numberOfBlogsToReturnPerPage, pageNumber, callback){
+  var indexesToSkip = numberOfBlogsToReturnPerPage*pageNumber;
+  var query = {post_username : username};
+  Blog.find(query,null,{
+      limit: numberOfBlogsToReturnPerPage,
+      skip: indexesToSkip,
+      sort:{'post_id': -1}
+    }, callback);
+}
