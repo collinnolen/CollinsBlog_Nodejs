@@ -19,7 +19,10 @@ router.get('/', function(req, res){
 
 router.get('/:id', function(req, res){
   Blog.getBlogByPostId(req.params.id, function(err, blog){
-    if(blog){
+    if(req.query.json != null){
+      res.send(JSON.stringify(blog));
+    }
+    else if(blog){
       _Comment.getBlogComments(blog.post_id, numberOfCommentsToShow, function(err, comments){
         res.render('blog/blogPage', {blog: blog, comments: comments});
       });
@@ -76,6 +79,12 @@ router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
     if(err) console.log(err);
     else res.send('success');
   });
+});
+
+
+router.put('/:id', Auth.ensureAuthenticated, function(req, res){
+  var id = req.params.id;
+  res.send('in put');
 });
 
 module.exports = router;

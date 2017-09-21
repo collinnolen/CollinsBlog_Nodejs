@@ -6,12 +6,17 @@
         Post Date: {{post_id}}
       </div>
       <div class="float_right delete-button">
-        <button type="button" class="btn btn-outline-danger delete-blog-button" data="{{post_id}}">Delete Blog</button>
+        <button type="button" class="btn btn-outline-secondary edit-blog-button" data="{{post_id}}">Edit</button>
+        <button type="button" class="btn btn-outline-danger delete-blog-button" data="{{post_id}}">Delete</button>
       </div>
     </div>
 
   {{/each}}
 </ul>
+
+
+<div class="hidden" id="blog-edit-prompt">
+</div>
 
 
 <div class="hidden" id="blog-deletion-prompt">
