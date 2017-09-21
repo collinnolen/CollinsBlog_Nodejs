@@ -9,7 +9,7 @@ var _Comment = require('../models/comment.js');
 
 const numberOfCommentsToShow = 10;
 
-//Get home
+//Blog routes
 router.get('/', function(req, res){
   var numberOfBlogsToReturn = 5;
   Blog.getRecentBlogs(numberOfBlogsToReturn, function(err, blogs){
@@ -17,7 +17,6 @@ router.get('/', function(req, res){
   });
 });
 
-// get blog post with :id
 router.get('/:id', function(req, res){
   Blog.getBlogByPostId(req.params.id, function(err, blog){
     if(blog){
@@ -32,7 +31,6 @@ router.get('/:id', function(req, res){
   });
 });
 
-//post a blog
 router.post('/', Auth.ensureAuthenticated, function(req, res){
   if(req.user != null){
     var id = microtime.now().toString(36); //base 36 to save url space.
@@ -71,6 +69,13 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
     req.flash('error_msg', 'You need to be logged in to make a blog post.');
     res.redirect('/users/login');
   }
+});
+
+router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
+  Blog.deleteBlogById(req.params.id, function(err){
+    if(err) console.log(err);
+    else res.send('success');
+  });
 });
 
 module.exports = router;

@@ -145,10 +145,8 @@ router.get('/registerNewUser', function(req, res){
 router.get('/login', function(req, res){
   if(req.query.redirect === undefined)
     res.render('user/login');
-  else{
-
+  else
     res.render('user/login',{query : '?redirect='+req.query.redirect});
-  }
 });
 
 router.post('/login',
@@ -201,7 +199,7 @@ passport.use(new LocalStrategy(
     User.getUserByEmail(email, function(err, user){
       if(err) console.log(err); //todo
       if(!user){
-        return done(null, false, {message: 'Invalid email.'})
+        return done(null, false, {message: 'Invalid email/password.'})
       }
 
       User.comparePassword(password, user.password, function(err, isMatch){
@@ -210,7 +208,7 @@ passport.use(new LocalStrategy(
           return done(null, user);
         }
         else{
-          return done(null, false, {message: 'Invalid password.'})
+          return done(null, false, {message: 'Invalid email/password.'})
         }
     });
   });

@@ -46,3 +46,8 @@ module.exports.getUserBlogsByPage = function(username, numberOfBlogsToReturnPerP
       sort:{'post_id': -1}
     }, callback);
 }
+
+module.exports.deleteBlogById = function(id, callback){
+  var query = {post_id : id};
+  Blog.find(query).remove(callback);
+}

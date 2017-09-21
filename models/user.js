@@ -1,10 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
-// mongoose.connect('mongodb://localhost/collins_blog');
-//
-// var db = mongoose.connection;
-
 var UserSchema = mongoose.Schema({
   first_name:{
     type: String

@@ -1,8 +1,26 @@
 <ul>
   {{#each blogs}}
-    <div class="card">
-      {{post_title}}</br>
-      Post Date: {{post_id}}
+    <div class="card" id="myBlog-container">
+      <div class="float_left">
+        {{post_title}}</br>
+        Post Date: {{post_id}}
+      </div>
+      <div class="float_right delete-button">
+        <button type="button" class="btn btn-outline-danger delete-blog-button" data="{{post_id}}">Delete Blog</button>
+      </div>
     </div>
+
   {{/each}}
 </ul>
+
+
+<div class="hidden" id="blog-deletion-prompt">
+  <div id="blog-contents">
+    <span id="blog-title"></span>
+    <span id="date-posted"></span>
+  </div>
+  <div id="deletion-prompt-buttons">
+    <input type="button" class="btn btn-danger" value="Delete" data="" id="delete-btn">
+    <input type="button" class="btn" data="" value="Cancel" id="cancel-btn">
+  </div>
+</div>

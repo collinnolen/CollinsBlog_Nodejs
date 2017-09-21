@@ -123,3 +123,36 @@ body {
   text-align: left;
   padding:2px;
 }
+
+.float_left{
+  float: left;
+}
+
+.float_right{
+  float: right;
+}
+
+#myBlog-container{
+  width:100%;
+  min-width: 300px;
+  display:inline-block;
+}
+
+#blog-deletion-prompt{
+  position: absolute;
+  width: 15%;
+  min-width: 300px;
+  height: 150px;
+  background-color: #F5F5F5;
+  top: 0; bottom: 0; left: 0; right: 0;
+  margin: auto;
+  border-radius: 5px;
+}
+
+.hidden{
+  display:none;
+}
+
+.delete-button{
+  padding:1%;
+}
