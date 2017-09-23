@@ -6,17 +6,12 @@ $(document).ready(function() {
   $('.delete-blog-button').click(function(e){
     var deletionPrompt = $('#blog-deletion-prompt');
     post_id =  $(e.target).attr('data');
-
-    deletionPrompt.fadeIn('medium', function(){
-      $('#blog-deletion-prompt').removeClass('hidden');
-    });
-    //$('body').children(':not(div#blog-deletion-prompt)').fadeTo( "medium" , 0.5);
+    show_box(deletionPrompt);
   });
 
   //cancels delete prompt.
   $('#cancel-btn').click(function(e){
-    hide_option_box();
-    //$('body').children().not($('#blog-deletion-prompt')).fadeTo( "medium" , 1);
+    hide_box('#blog-deletion-prompt');
     post_id = 'no-id'
   });
 
@@ -27,7 +22,7 @@ $(document).ready(function() {
       type: "DELETE",
       url: "/blogs/" + post_id,
       success: function(msg){
-          hide_option_box();
+          hide_box("#blog-deletion-prompt");
           location.reload();
       }
     });
@@ -38,27 +33,48 @@ $(document).ready(function() {
   $('.edit-blog-button').click(function(e){
     var $editPrompt = $('#blog-edit-prompt')
     post_id =  $(e.target).attr('data');
-
     if(post_id != 'no-id' && $editPrompt.hasClass('hidden')){
       $.ajax({
       type: "GET",
       url: "/blogs/" + post_id + "?json=true",
         success: function(data){
           var parsedData = JSON.parse(data);
-          editBox(parsedData);
-          $('#blog-edit-prompt').removeClass('hidden');
+          buildEditBox(parsedData);
+          show_box('#blog-edit-prompt');
         }
       });
     }
+    else{
+      console.log("error");
+    }
+  });
+
+  //
+  $('#blog-edit-submit').click(function(e){
+    var $title = $('#title-edit').val();
+    var $body = $('#body-edit').val();
+
+    $.ajax({
+    type: "PUT",
+    contentType: "application/json",
+    data: JSON.stringify({title:$title, body:$body}),
+    url: "/blogs/" + post_id,
+      success: function(data){
+        console.log('success');
+      },
+      error: function(){
+        console.log('failed');
+      },
+    }).done(function(){
+      hide_box('#blog-edit-prompt');
+      $('#edit-box-container').remove();
+      post_id='no-id';
+    });
   });
 
   //creates editbox
-  function editBox(data){
-    var $form = $("<form></form>");
-    $form.attr({
-      action: "/blogs/"+data.post_id,
-      method: "put"
-    });
+  function buildEditBox(data){
+    var $container = $("<div></div>").attr({id: 'edit-box-container'});
 
     var $divTitle = $("<div></div>");
     $divTitle.attr({
@@ -72,6 +88,7 @@ $(document).ready(function() {
       type:"text",
       class:"form-control",
       name: "title",
+      id: "title-edit",
       value: data.post_title
     }).appendTo($divTitle);
 
@@ -87,28 +104,28 @@ $(document).ready(function() {
     $("<textarea></textarea>").attr({
       type:"text",
       class:"form-control",
-      name:"body"
+      name:"body",
+      id: "body-edit"
     }).html(data.post_body).appendTo($divBody);
 
-    $form.append($divTitle);
-    $form.append($divBody);
+    $container.prepend($divBody);
+    $container.prepend($divTitle);
 
-    $("<button></button>").attr({
-      type:"submit",
-      class:"btn btn-default",
-      id: "edit-submit"
-    }).html("Submit").appendTo($form);
 
-    $('#blog-edit-prompt').append($form);
+    $('#blog-edit-prompt').append($container);
   }
 
   //hides prompt box.
-  function hide_option_box(){
-    $('#blog-deletion-prompt').fadeOut("medium", function() {
-      $('#blog-deletion-prompt').addClass('hidden');
+  function hide_box(elementToHide){
+    $(elementToHide).fadeOut("medium", function() {
+      $(elementToHide).addClass('hidden');
     });
-    //$('body').children(':not(div#dl-delete)').fadeTo( "medium" , 1, function() {
-    //});
+  }
+
+  function show_box(elementToShow){
+    $(elementToShow).fadeIn("medium", function() {
+      $(elementToShow).removeClass('hidden');
+    });
   }
 
 });

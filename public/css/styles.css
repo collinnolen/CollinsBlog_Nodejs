@@ -112,17 +112,7 @@ body {
   padding:0;
 }
 
-.recent-post-container{
-  /*border-top:1px;
-  border-top-style:solid;
-  border-color: black;*/
-}
 
-.recent-post-container .author, .title{
-  overflow: hidden;
-  text-align: left;
-  padding:2px;
-}
 
 .float_left{
   float: left;

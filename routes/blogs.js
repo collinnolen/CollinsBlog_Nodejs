@@ -13,7 +13,7 @@ const numberOfCommentsToShow = 10;
 router.get('/', function(req, res){
   var numberOfBlogsToReturn = 5;
   Blog.getRecentBlogs(numberOfBlogsToReturn, function(err, blogs){
-    res.render('blog/bloghome', {blogs: blogs});
+    res.render('blog/bloghome', {stylesheet: 'blog/bloghome', blogs: blogs});
   });
 });
 
@@ -82,9 +82,29 @@ router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
 });
 
 
-router.put('/:id', Auth.ensureAuthenticated, function(req, res){
+router.put('/:id', function(req, res){
   var id = req.params.id;
-  res.send('in put');
+  let body = req.body.body;
+  let title = req.body.title;
+
+  req.checkBody('body', 'Body of blog post is required.').notEmpty();
+  req.checkBody('title', 'Blog post must have a title.').notEmpty();
+
+  let errors = req.validationErrors();
+
+  if(errors){
+    res.render('./user/dashboard/myblogs.handlebars',{
+      errors:errors
+    });
+  }
+  else{
+    Blog.updateBlogById(id, title, body, function(err, blog){
+      if(err) console.log(err);
+      else res.send('success');
+    });
+  }
+
+  //res.send('in put');
 });
 
 module.exports = router;

@@ -47,6 +47,12 @@ module.exports.getUserBlogsByPage = function(username, numberOfBlogsToReturnPerP
     }, callback);
 }
 
+module.exports.updateBlogById = function(id, title, body, callback){
+  let query = {post_id:id};
+  let updates = {$set:{post_title:title, post_body:body}};
+  Blog.findOneAndUpdate(query, updates, callback);
+}
+
 module.exports.deleteBlogById = function(id, callback){
   var query = {post_id : id};
   Blog.find(query).remove(callback);
