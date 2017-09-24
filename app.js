@@ -1,28 +1,28 @@
-var express = require('express');
+const express = require('express');
 require('dotenv').config({path: '.env'})
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var exphds = require('express-handlebars');
-var expressValidator = require('express-validator');
-var flash = require('connect-flash');
-var session = require('express-session');
-var passport = require('passport');
-var LocalStrategy = require('passport-local');
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const exphds = require('express-handlebars');
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const mongo = require('mongodb');
+const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_URL, {useMongoClient:true});
-var db = mongoose.connection;
+const db = mongoose.connection;
 const nodemailer = require('nodemailer');
 
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var blogs = require('./routes/blogs');
-var comments = require('./routes/comments');
+const routes = require('./routes/index');
+const users = require('./routes/users');
+const blogs = require('./routes/blogs');
+const comments = require('./routes/comments');
 
 // // Init Application
- var app = express();
+ const app = express();
 //
 // // View engine
 app.set('views', path.join(__dirname, 'views'));

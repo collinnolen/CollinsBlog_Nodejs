@@ -1,16 +1,16 @@
-var express = require('express');
-var router = express.Router();
-var passport = require('passport');
-var LocalStrategy = require('passport-local');
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
 const randomstring = require('randomstring');
 
 const QueryUtility = require('../modules/queryUtility.js');
 const Auth = require('../middleware/authentication.js');
 
-var User = require('../models/user.js');
-var Blog = require('../models/blog.js');
-var UnverifiedUser = require('../models/unverifiedUser.js')
-var Mailer = require('../modules/mailer.js');
+const User = require('../models/user.js');
+const Blog = require('../models/blog.js');
+const UnverifiedUser = require('../models/unverifiedUser.js')
+const Mailer = require('../modules/mailer.js');
 
 
 //promises
@@ -144,9 +144,9 @@ router.get('/registerNewUser', function(req, res){
 //Login router functions
 router.get('/login', function(req, res){
   if(req.query.redirect === undefined)
-    res.render('user/login');
+    res.render('user/login', {stylesheet: 'user/login'});
   else
-    res.render('user/login',{query : '?redirect='+req.query.redirect});
+    res.render('user/login',{ stylesheet: 'user/login',query : '?redirect='+req.query.redirect});
 });
 
 router.post('/login',
@@ -178,7 +178,7 @@ router.get('/dashboard', Auth.ensureAuthenticated, function(req, res){
 
 
 router.get('/dashboard/newblog', Auth.ensureAuthenticated, function(req, res){
-  res.render('user/dashboard/createBlog');
+  res.render('user/dashboard/createBlog', {stylesheet: 'user/dashboard/createBlog'});
 });
 
 router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
@@ -189,7 +189,7 @@ router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
     page = req.query.page;
 
   Blog.getUserBlogsByPage(req.user.username, 10, page, function(err, blogs){
-    res.render('user/dashboard/myblogs', {blogs: blogs});
+    res.render('user/dashboard/myblogs', { stylesheet: 'user/dashboard/myblogs', blogs: blogs});
   });
 });
 

@@ -1,11 +1,11 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const microtime = require('microtime');
 
 const Auth = require('../middleware/authentication.js');
 
-var Blog = require('../models/blog.js');
-var _Comment = require('../models/comment.js');
+const Blog = require('../models/blog.js');
+const _Comment = require('../models/comment.js');
 
 const numberOfCommentsToShow = 10;
 
@@ -24,7 +24,7 @@ router.get('/:id', function(req, res){
     }
     else if(blog){
       _Comment.getBlogComments(blog.post_id, numberOfCommentsToShow, function(err, comments){
-        res.render('blog/blogPage', {blog: blog, comments: comments});
+        res.render('blog/blogPage', {stylesheet: 'blog/blogPage', blog: blog, comments: comments});
       });
     }
     else{
@@ -93,7 +93,8 @@ router.put('/:id', function(req, res){
   let errors = req.validationErrors();
 
   if(errors){
-    res.render('./user/dashboard/myblogs.handlebars',{
+    res.render('/user/dashboard/myblogs',{
+      stylesheet: 'user/dashboard/myblogs',
       errors:errors
     });
   }

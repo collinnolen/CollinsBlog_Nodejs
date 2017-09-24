@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-
+const mongoose = require('mongoose');
+const _Comment = require('./comment.js');
 
 var BlogSchema = mongoose.Schema({
   post_id:{
@@ -22,7 +22,7 @@ var BlogSchema = mongoose.Schema({
   }
 }, {collection: 'posts'});
 
-var Blog = module.exports = mongoose.model('Blog', BlogSchema);
+const Blog = module.exports = mongoose.model('Blog', BlogSchema);
 
 module.exports.createBlog = function(newBlog, callback){
   newBlog.save(callback);
@@ -55,5 +55,8 @@ module.exports.updateBlogById = function(id, title, body, callback){
 
 module.exports.deleteBlogById = function(id, callback){
   var query = {post_id : id};
-  Blog.find(query).remove(callback);
+  _Comment.deleteCommentsByPostId(id, function(err){
+    if (err) console.log(err);
+    Blog.find(query).remove(callback);
+  });
 }
