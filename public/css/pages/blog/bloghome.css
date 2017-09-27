@@ -9,3 +9,17 @@
   border-top-style:solid;
   border-color: black;*/
 }
+
+.main-blog-content{
+  float: left;
+}
+
+.recent-blog-posts{
+  float: right;
+}
+
+.recent-post-container{
+  max-width: 100%;
+  font-size: 12px;
+
+}

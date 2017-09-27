@@ -1,3 +1,11 @@
+
+//Handlebars helpers
+
+
+
+
+
+
 var post_id = "no-id";
 
 $(document).ready(function() {

@@ -38,7 +38,7 @@ module.exports.getRecentBlogs = function(numberOfBlogsToReturn, callback){
 }
 
 module.exports.getUserBlogsByPage = function(username, numberOfBlogsToReturnPerPage, pageNumber, callback){
-  var indexesToSkip = numberOfBlogsToReturnPerPage*pageNumber;
+  var indexesToSkip = numberOfBlogsToReturnPerPage * (pageNumber - 1);
   var query = {post_username : username};
   Blog.find(query,null,{
       limit: numberOfBlogsToReturnPerPage,
@@ -59,4 +59,9 @@ module.exports.deleteBlogById = function(id, callback){
     if (err) console.log(err);
     Blog.find(query).remove(callback);
   });
+}
+
+module.exports.getUserBlogCountByUsername = function(username, callback){
+  var query = {post_username: username}
+  Blog.count(query, callback);
 }

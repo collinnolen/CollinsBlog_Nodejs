@@ -4,47 +4,19 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const randomstring = require('randomstring');
 
+//Custom Modules
 const QueryUtility = require('../modules/queryUtility.js');
 const Auth = require('../middleware/authentication.js');
+const Mailer = require('../modules/mailer.js');
+const FileUtility = require('../modules/fileUtility.js');
 
+//Mongoose Models
 const User = require('../models/user.js');
 const Blog = require('../models/blog.js');
-const UnverifiedUser = require('../models/unverifiedUser.js')
-const Mailer = require('../modules/mailer.js');
+const UnverifiedUser = require('../models/unverifiedUser.js');
 
-
-//promises
-let getUserByEmail = function(email){
-  return new Promise(function(resolve, reject){
-    User.getUserByEmail(email, function(err, user){
-      if(err)
-        reject();
-      else{
-        if(user == null){
-          //console.log('null email');
-          resolve('null');
-        }
-        else
-          resolve(user);
-      }
-    });
-  });
-}
-
-let getUserByUsername = function(username){
-  return new Promise(function(resolve, reject){
-    User.getUserByUsername(username, function(err, user){
-      if(err)
-        reject();
-      else{
-        if(user == null)
-          resolve('null');
-        else
-          resolve(user);
-      }
-    });
-  });
-}
+//Variables
+const myBlogs_NumberOfBlogsToDisplay = 10;
 
 //register router functions
 router.get('/register', function(req, res){
@@ -172,10 +144,8 @@ router.get('/logout', Auth.ensureAuthenticated, function(req, res){
 
 //Dashboard router functions
 router.get('/dashboard', Auth.ensureAuthenticated, function(req, res){
-  res.render('user/dashboard/dashboard');
+  res.render('user/dashboard/dashboard', {stylesheet: 'user/dashboard/dashboard'});
 });
-
-
 
 router.get('/dashboard/newblog', Auth.ensureAuthenticated, function(req, res){
   res.render('user/dashboard/createBlog', {stylesheet: 'user/dashboard/createBlog'});
@@ -183,15 +153,70 @@ router.get('/dashboard/newblog', Auth.ensureAuthenticated, function(req, res){
 
 router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
   var page;
-  if(!req.query.page)
-    page = 0;
+  if(!req.query.page || req.query.page < 1)
+    page = 1;
   else
     page = req.query.page;
 
-  Blog.getUserBlogsByPage(req.user.username, 10, page, function(err, blogs){
-    res.render('user/dashboard/myblogs', { stylesheet: 'user/dashboard/myblogs', blogs: blogs});
-  });
+  Promise.all([getUserBlogsByPage(req.user.username, page), getUserBlogCount(req.user.username)])
+    .then(function(values){
+      let count = Math.ceil(values[1] / 10);
+      res.render('user/dashboard/myblogs', { stylesheet: 'user/dashboard/myblogs', blogCount: FileUtility.pageNumberJsonBuilder(count), blogs: values[0]});
+    })
+    .catch(function(errors){
+      console.log(errors);
+    });
 });
+
+//promises
+let getUserByEmail = function(email){
+  return new Promise(function(resolve, reject){
+    User.getUserByEmail(email, function(err, user){
+      if(err)
+        reject(err);
+      else{
+        if(user == null){
+          resolve('null');
+        }
+        else
+          resolve(user);
+      }
+    });
+  });
+}
+
+let getUserByUsername = function(username){
+  return new Promise(function(resolve, reject){
+    User.getUserByUsername(username, function(err, user){
+      if(err)
+        reject(err);
+      else{
+        if(user == null)
+          resolve('null');
+        else
+          resolve(user);
+      }
+    });
+  });
+}
+
+let getUserBlogsByPage = function(username, pageNumber){
+  return new Promise(function(resolve, reject){
+    Blog.getUserBlogsByPage(username, myBlogs_NumberOfBlogsToDisplay, pageNumber, function(err, blogs){
+      if(err) reject(err);
+      else resolve(blogs);
+    });
+  });
+}
+
+let getUserBlogCount = function(username){
+  return new Promise(function(resolve, reject){
+    Blog.getUserBlogCountByUsername(username, function(err, blogCount){
+      if(err) reject(err);
+      else resolve(blogCount);
+    });
+  });
+}
 
 //passport functions
 passport.use(new LocalStrategy(

@@ -78,41 +78,13 @@ body {
   }
 }
 
-
 .pageheader{
   margin-top: 30px;
 }
+
 .footer{
   margin-top: 15px;
 }
-
-.login-container{
-  margin: 0 auto;
-}
-
-.main-blog-content{
-  float: left;
-
-}
-
-.recent-blog-posts{
-
-  float: right;
-
-}
-
-.recent-post-container{
-  max-width: 100%;
-  font-size: 12px;
-
-}
-
-.recent-blog-list{
-  list-style: none;
-  padding:0;
-}
-
-
 
 .float_left{
   float: left;
@@ -121,8 +93,6 @@ body {
 .float_right{
   float: right;
 }
-
-
 
 .hidden{
   display:none;

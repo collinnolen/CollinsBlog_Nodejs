@@ -30,7 +30,7 @@ module.exports.deleteCommentsByPostId = function(postid, callback){
 }
 
 module.exports.deleteCommentByPostIdAndCommentId = function(postid, commentid, callback){
-
+  _Comment.find({post_id: postid, comment_timeposted: commentid}).remove(callback);
 }
 
 module.exports.getBlogComments = function(postid, numberOfCommentsToReturn, callback){
