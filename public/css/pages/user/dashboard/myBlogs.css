@@ -17,3 +17,30 @@
 .delete-button{
   padding:1%;
 }
+
+.center-align{
+  width:50%;
+  margin: 0 auto;
+}
+
+.createBlog-Button{
+  display:block;
+  margin: 0 auto;
+  width:75%;
+}
+
+h2{
+  text-align:center;
+}
+
+#page-nav{
+    float:right;
+    position:relative;
+    left:-50%;
+    text-align:left;
+}
+#page-nav ul{
+    list-style:none;
+    position:relative;
+    left:50%;
+}

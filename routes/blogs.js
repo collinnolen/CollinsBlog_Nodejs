@@ -36,7 +36,8 @@ router.get('/:id', function(req, res){
 
 router.post('/', Auth.ensureAuthenticated, function(req, res){
   if(req.user != null){
-    var id = microtime.now().toString(36); //base 36 to save url space.
+    var time = microtime.now().toString().substr(0,13);
+    var id = Number(time).toString(36); //base 36 to save url space.
     var author = req.user.first_name + ' ' + req.user.last_name;
     var username = req.user.username;
     var title = req.body.title;
@@ -82,7 +83,7 @@ router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
 });
 
 
-router.put('/:id', function(req, res){
+router.put('/:id', Auth.ensureAuthenticated, function(req, res){
   var id = req.params.id;
   let body = req.body.body;
   let title = req.body.title;

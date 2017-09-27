@@ -23,10 +23,20 @@ const comments = require('./routes/comments');
 
 // // Init Application
  const app = express();
-//
+
 // // View engine
+var hbs = exphds.create({
+  helpers: {
+    time: function(timeToConvert){
+      let longDate = new Date(parseInt(timeToConvert, 36));
+      let shortDate = longDate.getMonth()+1 + '/' + longDate.getDate() + "/" + longDate.getFullYear();
+      return shortDate;
+    }
+  },
+  defaultLayout: 'layout'
+});
 app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars',exphds({defaultLayout:'layout'}));
+app.engine('handlebars', hbs.engine); //exphds({defaultLayout:'layout'})
 app.set('view engine', 'handlebars');
 
 // //BodyParser middleware
