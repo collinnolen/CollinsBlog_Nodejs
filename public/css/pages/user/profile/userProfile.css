@@ -1,0 +1,42 @@
+.blog-container{
+  width:100%;
+  float: right;
+  padding: 5px;
+}
+
+#post-contents{
+  padding: 5px;
+}
+
+#post-contents h2{
+  text-align: center;
+}
+
+#blogs{
+  padding: 5px;
+}
+
+.title{
+  overflow: hidden;
+  text-align: center;
+  display:inline-block;
+}
+.date{
+  overflow: hidden;
+  display:inline-block;
+}
+
+.blog-container, #ative-post{
+  display: inline;
+}
+
+#ative-post{
+  width:100%;
+  float: left;
+  padding: 5px;
+}
+
+#user-container{
+  width:100%;
+  display:flex;
+}

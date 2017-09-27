@@ -142,13 +142,35 @@ router.get('/logout', Auth.ensureAuthenticated, function(req, res){
 });
 
 
+//User page routes
+router.get('/profile/:param1', function(req, res){
+  let page = 1;
+  Promise.all([
+    getUserBlogsByPage(req.params.param1, page),
+    getUserByUsername(req.params.param1)
+   ])
+    .then(function(values){
+      res.render('user/profile/userProfile', {
+        stylesheet: 'user/profile/userProfile',
+        User: values[1],
+        Blogs: values[0]
+      });
+    })
+    .catch(function(err){
+      console.log(err);
+    });
+});
+
+
 //Dashboard router functions
 router.get('/dashboard', Auth.ensureAuthenticated, function(req, res){
-  res.render('user/dashboard/dashboard', {stylesheet: 'user/dashboard/dashboard'});
+  res.render('user/dashboard/dashboard',
+   {stylesheet: 'user/dashboard/dashboard'});
 });
 
 router.get('/dashboard/newblog', Auth.ensureAuthenticated, function(req, res){
-  res.render('user/dashboard/createBlog', {stylesheet: 'user/dashboard/createBlog'});
+  res.render('user/dashboard/createBlog',
+   {stylesheet: 'user/dashboard/createBlog'});
 });
 
 router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
@@ -158,10 +180,17 @@ router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
   else
     page = req.query.page;
 
-  Promise.all([getUserBlogsByPage(req.user.username, page), getUserBlogCount(req.user.username)])
+  Promise.all([
+    getUserBlogsByPage(req.user.username, page),
+    getUserBlogCount(req.user.username)
+   ])
     .then(function(values){
       let count = Math.ceil(values[1] / 10);
-      res.render('user/dashboard/myblogs', { stylesheet: 'user/dashboard/myblogs', blogCount: FileUtility.pageNumberJsonBuilder(count), blogs: values[0]});
+      res.render('user/dashboard/myblogs',{
+         stylesheet: 'user/dashboard/myblogs',
+         blogCount: FileUtility.pageNumberJsonBuilder(count),
+         blogs: values[0]
+       });
     })
     .catch(function(errors){
       console.log(errors);

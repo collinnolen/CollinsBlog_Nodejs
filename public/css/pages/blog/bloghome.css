@@ -19,7 +19,26 @@
 }
 
 .recent-post-container{
-  max-width: 100%;
   font-size: 12px;
+}
 
+#blog-home-container{
+  width:100%;
+  display:flex;
+}
+
+#ative-post{
+  width:100%;
+  float: left;
+  padding: 5px;
+  display:inline;
+}
+
+#recent_blogs{
+  padding: 5px;
+  display:inline;
+}
+
+#blog-home-container h2, #blog-home-container h3{
+  text-align: center;
 }
