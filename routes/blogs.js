@@ -18,17 +18,23 @@ router.get('/', function(req, res){
 });
 
 router.get('/:id', function(req, res){
+  var username;
+  if(req.user === undefined)
+    username = undefined;
+  else
+    username = req.user.username;
+
   Blog.getBlogByPostId(req.params.id, function(err, blog){
     if(req.query.json != null){
       res.send(JSON.stringify(blog));
     }
     else if(blog){
       _Comment.getBlogComments(blog.post_id, numberOfCommentsToShow, function(err, comments){
-        res.render('blog/blogPage', {stylesheet: 'blog/blogPage', blog: blog, comments: comments});
+        res.render('blog/blogPage', {stylesheet: 'blog/blogPage', user: username, blog: blog, comments: comments});
       });
     }
     else{
-      req.flash('error_msg', 'You need to be logged in to make a blog post.');
+      req.flash('error_msg', 'Blog post ' + req.params.id + ' does not exist.');
       res.redirect('/blogs');
     }
   });
@@ -42,6 +48,12 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
     var username = req.user.username;
     var title = req.body.title;
     var body = req.body.body;
+    var featured;
+
+    if(req.body.featured)
+      featured = true;
+    else
+      featured = false;
 
     req.checkBody('body', 'Body of blog post is required.').notEmpty();
     req.checkBody('title', 'Blog post must have a title.').notEmpty();
@@ -49,7 +61,7 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
     var errors = req.validationErrors();
 
     if(errors){
-      res.render('user/dashboard',{
+      res.render('user/dashboard/createblog',{
         errors:errors
       });
     }
@@ -60,13 +72,24 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
         post_username : username,
         //post_img : img,
         post_title : title,
-        post_body : body
+        post_body : body,
+        post_featured : featured
       });
 
-      Blog.createBlog(newBlogPost, function(err, blog){
-        if(err) console.log(err);
-        else res.redirect('/blogs/'+blog.post_id);
-      });
+      if(featured === true){
+        Blog.removeFeatured(function(){
+          Blog.createBlog(newBlogPost, function(err, blog){
+            if(err) console.log(err);
+            else res.redirect('/blogs/'+blog.post_id);
+          });
+        });
+      }
+      else{
+        Blog.createBlog(newBlogPost, function(err, blog){
+          if(err) console.log(err);
+          else res.redirect('/blogs/'+blog.post_id);
+        });
+      }
     }
   }
   else{
@@ -82,31 +105,42 @@ router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
   });
 });
 
-
 router.put('/:id', Auth.ensureAuthenticated, function(req, res){
   var id = req.params.id;
-  let body = req.body.body;
-  let title = req.body.title;
+  if(req.query.featured === 'true'){
 
-  req.checkBody('body', 'Body of blog post is required.').notEmpty();
-  req.checkBody('title', 'Blog post must have a title.').notEmpty();
+    var featured = true;
 
-  let errors = req.validationErrors();
-
-  if(errors){
-    res.render('/user/dashboard/myblogs',{
-      stylesheet: 'user/dashboard/myblogs',
-      errors:errors
-    });
+    Blog.removeFeatured(function(err){
+      if(err) res.send(err);
+      else Blog.makeFeatured(id, function(){
+        res.send('success');
+      });
+    })
   }
   else{
-    Blog.updateBlogById(id, title, body, function(err, blog){
-      if(err) console.log(err);
-      else res.send('success');
-    });
-  }
 
-  //res.send('in put');
+    var body = req.body.body;
+    var title = req.body.title;
+
+    req.checkBody('body', 'Body of blog post is required.').notEmpty();
+    req.checkBody('title', 'Blog post must have a title.').notEmpty();
+
+    let errors = req.validationErrors();
+
+    if(errors){
+      res.render('/user/dashboard/myblogs',{
+        stylesheet: 'user/dashboard/myblogs',
+        errors:errors
+      });
+    }
+    else{
+      Blog.updateBlogById(id, title, body, function(err, blog){
+        if(err) console.log(err);
+        else res.send('success');
+      });
+    }
+  }
 });
 
 module.exports = router;

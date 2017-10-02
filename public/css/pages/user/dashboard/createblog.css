@@ -1,0 +1,12 @@
+#checkbox-container{
+  text-align: left;
+
+}
+
+#checkbox_featured{
+  display: inline-block;
+}
+
+#checkbox_label{
+  display: inline;
+}

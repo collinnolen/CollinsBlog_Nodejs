@@ -1,5 +1,5 @@
 <h2>Dashbord</h2>
-<p>Welcome to the dashboard.</p>
+<p>Welcome to your dashboard.</p>
 
 <div id="dashboard-button-container">
 
@@ -14,12 +14,31 @@
     <div class="row" id="main-content-row">
       <div class="col-lg-8">
         <div class="card">
-          Test
+          {{#if featuredblog}}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item ul_label"><strong>Featured Blog</strong></li>
+            <li class="list-group-item">
+              <h3 class="card-title" id="featured_title">{{featuredblog.post_title}}</h3>
+              <p class="card-text" id="featured_body">{{featuredblog.post_body}}</p>
+            </li>
+          </ul>
+          {{else}}
+            <a class="btn btn-primary" href="dashboard/myblogs?page=1">Add a featured blog!</a>
+          {{/if}}
         </div>
       </div>
       <div class="col-lg-4">
         <div class="card">
-          Test
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item ul_label"><strong>Recent Blogs</strong></li>
+            {{#each recentblogs}}
+              <li class="list-group-item recent-blogs-list-item">
+                <a href="/blogs/{{post_id}}">
+                  <span class="no-overflow">{{post_title}}</span>
+                </a>
+              </li>
+            {{/each}}
+          </ul>
         </div>
       </div>
     </div>

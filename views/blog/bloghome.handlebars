@@ -15,12 +15,19 @@
     </div>
   </div>
   <div class="col-lg-4 recent-blog-posts" id="recent_blogs">
-    <h2>Recent Blogs</h2>
-    {{#each blogs}}
-      <div class="recent-post-container card">
-        <div class="title"><a href="blogs/{{post_id}}">{{post_title}}</a></div>
-        <div class="author">-{{post_author}}</div>
-      </div>
-    {{/each}}
+    <div class="recent-post-container card">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item ul_label"><strong>Recent Blogs</strong></li>
+        {{#each blogs}}
+        <li class="list-group-item recent-blogs-list-item">
+          <a href="blogs/{{post_id}}">
+            <span class="no-overflow">{{post_title}}</span>
+          </a>
+          <span class="no-overflow">{{post_author}}</span>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+
   </div>
 </div>

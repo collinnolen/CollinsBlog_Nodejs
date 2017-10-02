@@ -39,4 +39,25 @@ router.post('/:id', Auth.ensureAuthenticated, function(req, res){
   }
 });
 
+
+router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
+  var comment_id = req.params.id;
+  if(req.query.postid === undefined){
+    res.send('Post id was not included.');
+  }else{
+    var post_id = req.query.postid;
+    _Comment.deleteCommentByPostIdAndCommentId(post_id, comment_id, function(err, comment){
+      if(err) res.send(err);
+      if(comment.result.n === 0){
+        req.flash('error_msg', 'Comment ' + comment_id + ' couldn\'t be deleted from post ' + post_id +'.');
+        res.send('Failed to delete comment '+ comment_id);
+      }
+      else{
+        req.flash('success_msg', 'Comment ' + comment_id + ' successfully deleted from post ' + post_id +'.')
+        res.send('Successfully delete comment ' + comment_id + ' from post '+ post_id + '.');
+      }
+    });
+  }
+});
+
 module.exports = router;

@@ -10,10 +10,13 @@
   {{#each blogs}}
     <div class="card" id="myBlog-container">
       <div class="float_left">
-        {{post_title}}</br>
+        <a href="/blogs/{{post_id}}">{{post_title}}</a></br>
         Post Date: {{time post_id}}
       </div>
       <div class="float_right delete-button">
+        {{#unless post_featured}}
+        <button type="button" class="btn btn-outline-primary make-featured-button" data="{{post_id}}">Feature</button>
+        {{/unless}}
         <button type="button" class="btn btn-outline-secondary edit-blog-button" data="{{post_id}}">Edit</button>
         <button type="button" class="btn btn-outline-danger delete-blog-button" data="{{post_id}}">Delete</button>
       </div>

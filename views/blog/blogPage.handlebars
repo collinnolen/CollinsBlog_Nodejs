@@ -1,7 +1,6 @@
 <h2>{{blog.post_title}}</h2>
 <p>{{blog.post_body}}</p>
 
-
 <div class="">
   <ul class="recent-comment-list">
     {{#each comments}}
@@ -10,18 +9,22 @@
           <div class="comment-body">{{comment_body}}</div>
           <div class="comment-author">-{{comment_author}},  <span>posted on {{comment_timeposted}}</span></div>
         </div>
-        {{#if comment_username}}
         <div class="comment-buttons">
-          <a href="#" class="comment-delete-link">Delete</a>
-          <a href="#" class="comment-edit-link">Edit</a>
-        </div>
+        {{#if ../user}}
+          {{#matchingUsers comment_username ../user}}
+            <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="delete-comment-button">Delete</a>
+            <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="comment-edit-link">Edit</a>
+          {{else}}
+            <a href="#" class="comment-report-link">Report</a>
+          {{/matchingUsers}}
         {{/if}}
+        </div>
       </li>
     {{/each}}
   </ul>
 </div>
 
-
+{{#if user}}
 <form action="/comments/{{blog.post_id}}"+ method="post">
   <div class="form-group">
     <label>Comment:</label>
@@ -29,3 +32,6 @@
   </div>
   <button type="submit" class="btn btn-default">Submit</button>
 </form>
+{{else}}
+<button class="btn btn-primary" type="button" name="button">Log in to comment!</button>
+{{/if}}

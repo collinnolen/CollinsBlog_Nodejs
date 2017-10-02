@@ -164,8 +164,20 @@ router.get('/profile/:param1', function(req, res){
 
 //Dashboard router functions
 router.get('/dashboard', Auth.ensureAuthenticated, function(req, res){
-  res.render('user/dashboard/dashboard',
-   {stylesheet: 'user/dashboard/dashboard'});
+  Promise.all([
+      getUserRecentBlogs(req.user.username, 5),
+      getUserFeaturedBlog(req.user.username)
+    ])
+  .then(function(values){
+    res.render('user/dashboard/dashboard',
+     {stylesheet: 'user/dashboard/dashboard',
+      recentblogs: values[0],
+      featuredblog: values[1][0]});
+  })
+  .catch(function(err){
+    res.send('Failed');
+    console.log(err.message);
+  });
 });
 
 router.get('/dashboard/newblog', Auth.ensureAuthenticated, function(req, res){
@@ -243,6 +255,24 @@ let getUserBlogCount = function(username){
     Blog.getUserBlogCountByUsername(username, function(err, blogCount){
       if(err) reject(err);
       else resolve(blogCount);
+    });
+  });
+}
+
+let getUserRecentBlogs = function(username, blogsToReturn){
+  return new Promise(function(resolve, reject){
+    Blog.getUserRecentBlogs(username, blogsToReturn, function(err, blogs){
+      if(err) reject(err);
+      else resolve(blogs);
+    });
+  });
+}
+
+let getUserFeaturedBlog = function(username){
+  return new Promise(function(resolve, reject){
+    Blog.getUsersFeaturedBlog(username, function(err, blog){
+      if(err) reject(err);
+      else resolve(blog);
     });
   });
 }

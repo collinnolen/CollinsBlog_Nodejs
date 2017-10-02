@@ -2,6 +2,49 @@ var post_id = "no-id";
 
 $(document).ready(function() {
 
+  //Makes post featured
+  $('.make-featured-button').click(function(e){
+    var id = $(e.target).attr('data');
+    $.ajax({
+    type: "PUT",
+    url: "/blogs/" + id + '?featured=true',
+      success: function(data){
+        console.log('success');
+      },
+      error: function(){
+        console.log('failed');
+      },
+    }).done(function(){
+      window.location.reload();
+      post_id='no-id';
+    });
+  });
+
+  //delete comment button
+  $('.delete-comment-button').click(function(e){
+    let ids = ($(e.target).attr('data')).split(',');
+    let comment_id = ids[0];
+    let post_id = ids[1];
+
+    $.ajax({
+      type: "DELETE",
+      url: "/comments/" + comment_id + '?postid=' + post_id,
+      success: function(data){
+        console.log('success');
+      },
+      error: function(err){
+        console.log('error');
+      },
+    }).done(function(){
+      window.location.reload();
+    })
+  });
+
+  //edit comment button
+  $('.edit-comment-button').click(function(e){
+
+  });
+
   //delete blog is pressed.
   $('.delete-blog-button').click(function(e){
     var deletionPrompt = $('#blog-deletion-prompt');
@@ -31,6 +74,7 @@ $(document).ready(function() {
 
   //
   $('.edit-blog-button').click(function(e){
+    console.log('here');
     var $editPrompt = $('#blog-edit-prompt')
     post_id =  $(e.target).attr('data');
     if(post_id != 'no-id' && $editPrompt.hasClass('hidden')){

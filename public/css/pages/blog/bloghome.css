@@ -42,3 +42,20 @@
 #blog-home-container h2, #blog-home-container h3{
   text-align: center;
 }
+
+.no-overflow{
+  display:inline-block;
+  width:100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ul_label{
+  padding: 1px;
+  background-color:#F0F0F0;
+}
+
+.recent-blogs-list-item{
+  padding: 5px;
+}

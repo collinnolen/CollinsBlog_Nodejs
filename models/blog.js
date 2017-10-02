@@ -19,6 +19,9 @@ var BlogSchema = mongoose.Schema({
   },
   post_body:{
     type: String
+  },
+  post_featured:{
+    type: Boolean
   }
 }, {collection: 'posts'});
 
@@ -61,7 +64,26 @@ module.exports.deleteBlogById = function(id, callback){
   });
 }
 
+module.exports.getUsersFeaturedBlog = function(username, callback){
+  var query = {post_username: username, post_featured: true}
+  Blog.find(query, callback);
+}
+
+module.exports.makeFeatured = function(id, callback){
+  var query = {post_id: id};
+  Blog.findOneAndUpdate(query, {post_featured: true}, callback);
+}
+
+module.exports.removeFeatured = function(callback){
+  var query = {post_featured: true};
+  Blog.findOneAndUpdate(query, {post_featured: false}, callback);
+}
+
 module.exports.getUserBlogCountByUsername = function(username, callback){
   var query = {post_username: username}
   Blog.count(query, callback);
+}
+
+module.exports.getUserRecentBlogs = function(username, numberOfBlogsToReturn, callback){
+  Blog.find({post_username: username},null,{ limit: numberOfBlogsToReturn,  sort:{'post_id': -1} }, callback );
 }

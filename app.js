@@ -15,7 +15,7 @@ mongoose.connect(process.env.DATABASE_URL, {useMongoClient:true});
 const db = mongoose.connection;
 const nodemailer = require('nodemailer');
 
-
+//requiring route files
 const routes = require('./routes/index');
 const users = require('./routes/users');
 const blogs = require('./routes/blogs');
@@ -31,6 +31,14 @@ var hbs = exphds.create({
       let longDate = new Date(parseInt(timeToConvert, 36));
       let shortDate = longDate.getMonth()+1 + '/' + longDate.getDate() + "/" + longDate.getFullYear();
       return shortDate;
+    },
+    matchingUsers: function(userA, userB, options){
+      if(userA === undefined || userB === undefined)
+        return options.inverse();
+      else if (userA === userB)
+        return options.fn();
+      else
+        return options.inverse();
     }
   },
   defaultLayout: 'layout'
