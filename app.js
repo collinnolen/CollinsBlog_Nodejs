@@ -11,9 +11,11 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const mongo = require('mongodb');
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+mongoose.Promise = global.Promise;
 mongoose.connect(process.env.DATABASE_URL, {useMongoClient:true});
 const db = mongoose.connection;
-const nodemailer = require('nodemailer');
+
 
 //requiring route files
 const routes = require('./routes/index');

@@ -41,29 +41,30 @@ router.get('/:id', function(req, res){
 });
 
 router.post('/', Auth.ensureAuthenticated, function(req, res){
-  if(req.user != null){
-    var time = microtime.now().toString().substr(0,13);
-    var id = Number(time).toString(36); //base 36 to save url space.
-    var author = req.user.first_name + ' ' + req.user.last_name;
-    var username = req.user.username;
-    var title = req.body.title;
-    var body = req.body.body;
-    var featured;
+  var time = microtime.now().toString().substr(0,13);
+  var id = Number(time).toString(36); //base 36 to save url space.
+  var author = req.user.first_name + ' ' + req.user.last_name;
+  var username = req.user.username;
+  var title = req.body.title;
+  var body = req.body.body;
+  var featured;
 
-    if(req.body.featured)
-      featured = true;
-    else
-      featured = false;
+  //assigns boolean to checkbox value
+  if(req.body.featured)
+    featured = true;
+  else
+    featured = false;
 
-    req.checkBody('body', 'Body of blog post is required.').notEmpty();
-    req.checkBody('title', 'Blog post must have a title.').notEmpty();
+  req.checkBody('body', 'Body of blog post is required.').notEmpty();
+  req.checkBody('title', 'Blog post must have a title.').notEmpty();
 
-    var errors = req.validationErrors();
-
-    if(errors){
-      res.render('user/dashboard/createblog',{
-        errors:errors
-      });
+  req.getValidationResult().then(function(result){
+    if(!result.isEmpty()){
+          var errors = result.array().map(function (elem) {
+              return elem.msg;
+          });
+          console.log('There are following validation errors: ' + errors.join('&&'));
+          res.render('user/dashboard/createblog', { errors: errors });
     }
     else{
       var newBlogPost= new Blog({
@@ -89,13 +90,9 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
           if(err) console.log(err);
           else res.redirect('/blogs/'+blog.post_id);
         });
-      }
-    }
-  }
-  else{
-    req.flash('error_msg', 'You need to be logged in to make a blog post.');
-    res.redirect('/users/login');
-  }
+      }//end else
+    }//end else
+  });
 });
 
 router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
