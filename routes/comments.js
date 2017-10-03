@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 const microtime = require('microtime');
 
+//middleware
 const Auth = require('../middleware/authentication.js');
+const QueryChecker = require('../middleware/queryChecker.js');
 
 var _Comment = require('../models/comment.js');
 
@@ -39,6 +41,34 @@ router.post('/:id', Auth.ensureAuthenticated, function(req, res){
   });
 });
 
+router.get('/:id', QueryChecker.commentAndPostId, function(req, res){
+  _Comment.getCommentByPostIdAndCommentId(req.query.post_id, req.params.id, function(err, comment){
+    res.send(JSON.stringify(comment));
+  });
+});
+
+router.put('/:id', QueryChecker.postId, Auth.ensureAuthenticated, function(req, res){
+  var body = req.body.comment_body;
+
+  req.checkBody('comment_body', 'Body of the comment can not be empty.').notEmpty();
+
+  req.getValidationResult().then(function(result){
+    if(!result.isEmpty()){
+      var errors = result.array().map(function (elem) { return elem.msg; });
+      res.redirect('/blog/blogPage/' + req.query.post_id,{
+        errors: errors
+      });
+    }
+    else{
+      _Comment.updateCommentByPostIdAndCommentId(req.query.post_id, req.params.id, body, function(err, comment){
+        if(err) res.send('Failed');
+        else res.send('Success');
+      });
+    }
+  });
+
+
+});
 
 router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
   var comment_id = req.params.id;

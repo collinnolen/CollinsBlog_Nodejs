@@ -42,7 +42,24 @@ $(document).ready(function() {
 
   //edit comment button
   $('.edit-comment-button').click(function(e){
+    var $editPrompt = $('#edit-comment-button');
+    let ids = $(e.target).attr('data').split(',');
+    let commentid =  ids[0];
+    let postid = ids[1]
 
+    $.ajax({
+    type: "GET",
+    url: "/comments/" + commentid + "?json=true&post_id="+postid,
+      success: function(data){
+        var parsedData = JSON.parse(data);
+        buildCommentEditBox(parsedData);
+      },
+      error: function(err){
+        console.log(err);
+      }
+    }).done(function(){
+      //window.location.reload();
+    });
   });
 
   //delete blog is pressed.
@@ -74,7 +91,6 @@ $(document).ready(function() {
 
   //
   $('.edit-blog-button').click(function(e){
-    console.log('here');
     var $editPrompt = $('#blog-edit-prompt')
     post_id =  $(e.target).attr('data');
     if(post_id != 'no-id' && $editPrompt.hasClass('hidden')){
@@ -116,6 +132,59 @@ $(document).ready(function() {
       post_id='no-id';
     });
   });
+
+  $('.comment-container').on('click', '#edit-comment-container #submit-comment-edit', function(e){
+    var new_value = $('#textArea-edit-comment').val();
+    var ids = $('#textArea-edit-comment').attr('data').split(',');
+    var commentid = ids[0];
+    var postid = ids[1];
+
+    $.ajax({
+    type: "PUT",
+    contentType: "application/json",
+    data: JSON.stringify({comment_body:new_value}),
+    url: "/comments/" + commentid + '?post_id=' + postid,
+      success: function(data){
+        console.log('success');
+      },
+      error: function(){
+        console.log('failed');
+      },
+    }).done(function(){
+      window.location.reload();
+    });
+  });
+
+  //creates comment edit box.
+  function buildCommentEditBox(data){
+    var _data = data[0];
+
+    var $container = $("<div></div>")
+    .attr(
+      {id: 'edit-comment-container'}
+    );
+
+    var $textArea = $("<textArea></textArea>")
+    .attr({
+      id: 'textArea-edit-comment',
+      data: _data.comment_timeposted + ',' + _data.post_id
+    })
+    .html(_data.comment_body)
+    .appendTo($container);
+
+    var $submitbutton = $("<button></button>")
+    .attr({
+      href: '#',
+      class: 'btn btn-primary-outline',
+      id: 'submit-comment-edit'
+    }).html('Submit')
+    .appendTo($container);
+
+
+
+    $('#'+_data.comment_timeposted+'-comment-body').replaceWith($container);
+    console.log('#'+_data.comment_timeposted+'-comment-body');
+  }
 
   //creates editbox
   function buildEditBox(data){

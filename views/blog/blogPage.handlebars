@@ -6,14 +6,14 @@
     {{#each comments}}
       <li class="recent-comment-container card">
         <div class="comment-container">
-          <div class="comment-body">{{comment_body}}</div>
+          <div class="comment-body" id="{{comment_timeposted}}-comment-body">{{comment_body}}</div>
           <div class="comment-author">-{{comment_author}},  <span>posted on {{comment_timeposted}}</span></div>
         </div>
         <div class="comment-buttons">
         {{#if ../user}}
           {{#matchingUsers comment_username ../user}}
             <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="delete-comment-button">Delete</a>
-            <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="comment-edit-link">Edit</a>
+            <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="edit-comment-button">Edit</a>
           {{else}}
             <a href="#" class="comment-report-link">Report</a>
           {{/matchingUsers}}
