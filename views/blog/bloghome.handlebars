@@ -1,17 +1,17 @@
 <div id="blog-home-container">
   <div id="ative-post" class="col-lg-8">
-    <h2>Blog Home</h2>
-    <div class="card" id="post-contents">
-      <h2>Title</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet est iaculis, fringilla ante vel, commodo augue. Proin eros lectus, bibendum nec vestibulum id, feugiat nec ex. Sed rutrum et ante sed bibendum. Donec at varius mi. Phasellus sagittis porttitor elit in tincidunt. Etiam convallis, nisi in tempus gravida, metus est ultricies orci, quis hendrerit ante mauris at felis. Nulla gravida turpis non tortor luctus elementum. Suspendisse eget congue lorem, quis molestie felis. Donec gravida eu turpis non sollicitudin. Integer quis gravida enim. Vivamus molestie quam enim, eu fermentum risus congue eget. Etiam pharetra id nibh ac ullamcorper.
+    <div class="card">
+      {{#if featuredblog}}
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item ul_label"><strong>Featured Blog</strong></li>
+        <li class="list-group-item">
+          <h3 class="card-title" id="featured_title">{{featuredblog.post_title}}</h3>
+          <p class="card-text" id="featured_body">{{featuredblog.post_body}}</p>
+        </li>
+      </ul>
+      {{else}}
 
-  Sed mattis felis sem, nec feugiat est euismod eget. Morbi ac aliquam mauris. Aliquam suscipit sapien diam, ac tempus massa eleifend et. Praesent lobortis hendrerit odio, at pretium ante fringilla ornare. Vivamus molestie quis odio sed posuere. Sed quis metus non orci aliquet mollis ut ac orci. Nulla condimentum quis mauris vel vestibulum. Pellentesque ut dui orci. Nam euismod augue odio, non euismod mi elementum vitae. Nunc maximus, nunc at tincidunt tincidunt, orci augue porta lectus, id pellentesque orci justo malesuada erat. Pellentesque arcu sapien, faucibus ut condimentum et, posuere sit amet lacus. Fusce nibh diam, interdum quis bibendum at, faucibus eget tellus. Integer in rutrum est.
-
-  Maecenas ex dui, mollis ut sem eget, dignissim aliquet quam. Vivamus sollicitudin commodo lorem, vel egestas mauris hendrerit nec. Aenean elementum tellus vel metus fermentum faucibus. Curabitur a erat id nunc fringilla luctus a vel odio. Vestibulum id sem id purus pharetra maximus ut sed odio. Mauris nec dolor risus. Sed sed venenatis mi, vitae ullamcorper turpis. Nunc eleifend mi et nibh sollicitudin, ut mattis nulla bibendum. Vivamus viverra facilisis dolor at vehicula. Aliquam dictum lacus ex, et eleifend nisl euismod nec. Pellentesque ac hendrerit turpis. Mauris quis lorem sed erat imperdiet tincidunt ac quis nibh.
-
-  Curabitur varius orci feugiat fringilla sagittis. Sed molestie rutrum urna, a vestibulum ligula egestas quis. Sed lacus nulla, aliquam a malesuada iaculis, consectetur in dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque convallis diam sit amet egestas lobortis. In dignissim vel odio ut gravida. Ut at quam eu massa rutrum dictum sed nec nisl. Phasellus venenatis lacus non arcu scelerisque porttitor.
-
-  Aliquam erat volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a convallis augue. Duis in libero tincidunt, pharetra nunc sit amet, rutrum odio. Nulla blandit sem ligula, in venenatis neque condimentum vel. Ut varius vitae ligula malesuada vestibulum. Aenean condimentum posuere nisl vitae luctus. Etiam vitae imperdiet ligula. Nam vel augue scelerisque, consectetur neque in, semper nisi. Cras id mattis mi. Curabitur blandit eget leo vel bibendum. Cras vestibulum maximus nisl.</p>
+      {{/if}}
     </div>
   </div>
   <div class="col-lg-4 recent-blog-posts" id="recent_blogs">

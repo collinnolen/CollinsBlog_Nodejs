@@ -64,7 +64,7 @@ module.exports.deleteBlogById = function(id, callback){
   });
 }
 
-module.exports.getUsersFeaturedBlog = function(username, callback){
+module.exports.getUserFeaturedBlog = function(username, callback){
   var query = {post_username: username, post_featured: true}
   Blog.find(query, callback);
 }

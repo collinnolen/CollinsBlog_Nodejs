@@ -2,8 +2,13 @@ const express = require('express');
 const router = express.Router();
 const microtime = require('microtime');
 
+//middleware
 const Auth = require('../middleware/authentication.js');
 
+//custom modules
+const PromiseUtil = require('../modules/promises.js')
+
+//models
 const Blog = require('../models/blog.js');
 const _Comment = require('../models/comment.js');
 
@@ -113,7 +118,6 @@ router.put('/:id', Auth.ensureAuthenticated, function(req, res){
     })
   }
   else{
-
     var body = req.body.body;
     var title = req.body.title;
 
@@ -123,11 +127,11 @@ router.put('/:id', Auth.ensureAuthenticated, function(req, res){
     //let errors = req.validationErrors();
     req.getValidationResult().then(function(result){
       if(!result.isEmpty()){
-            var errors = result.array().map(function (elem) { return elem.msg; });
-            res.render('/user/dashboard/myblogs',{
-              stylesheet: 'user/dashboard/myblogs',
-              errors:errors
-            });
+        var errors = result.array().map(function (elem) { return elem.msg; });
+        res.render('/user/dashboard/myblogs',{
+          stylesheet: 'user/dashboard/myblogs',
+          errors:errors
+        });
       }
       else{
         Blog.updateBlogById(id, title, body, function(err, blog){

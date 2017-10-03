@@ -9,6 +9,7 @@ const QueryUtility = require('../modules/queryUtility.js');
 const Auth = require('../middleware/authentication.js');
 const Mailer = require('../modules/mailer.js');
 const FileUtility = require('../modules/fileUtility.js');
+const PromiseUtil = require('../modules/promises.js');
 
 //Mongoose Models
 const User = require('../models/user.js');
@@ -47,7 +48,7 @@ router.post('/register', function(req, res){
       });
     }
     else{
-      Promise.all([getUserByEmail(email), getUserByUsername(username)])
+      Promise.all([PromiseUtil.getUserByEmail(email), PromiseUtil.getUserByUsername(username)])
         .then(function(values){
           console.log(values);
           if(values[0] === 'null' && values[1] === 'null'){
@@ -146,15 +147,15 @@ router.get('/logout', Auth.ensureAuthenticated, function(req, res){
 //User page routes
 router.get('/profile/:param1', function(req, res){
   var page;
-  
+
   if(req.query.page === undefined)
     page = 1;
   else
     page = req.query.page;
 
   Promise.all([
-    getUserBlogsByPage(req.params.param1, page),
-    getUserByUsername(req.params.param1)
+    PromiseUtil.getUserBlogsByPage(req.params.param1, page),
+    PromiseUtil.getUserByUsername(req.params.param1)
    ])
     .then(function(values){
       res.render('user/profile/userProfile', {
@@ -172,8 +173,8 @@ router.get('/profile/:param1', function(req, res){
 //Dashboard router functions
 router.get('/dashboard', Auth.ensureAuthenticated, function(req, res){
   Promise.all([
-      getUserRecentBlogs(req.user.username, 5),
-      getUserFeaturedBlog(req.user.username)
+      PromiseUtil.getUserRecentBlogs(req.user.username, 5),
+      PromiseUtil.getUserFeaturedBlog(req.user.username)
     ])
   .then(function(values){
     res.render('user/dashboard/dashboard',
@@ -200,8 +201,8 @@ router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
     page = req.query.page;
 
   Promise.all([
-    getUserBlogsByPage(req.user.username, page),
-    getUserBlogCount(req.user.username)
+    PromiseUtil.getUserBlogsByPage(req.user.username, page),
+    PromiseUtil.getUserBlogCount(req.user.username)
    ])
     .then(function(values){
       let count = Math.ceil(values[1] / 10);
@@ -215,74 +216,6 @@ router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
       console.log(errors);
     });
 });
-
-//promises
-let getUserByEmail = function(email){
-  return new Promise(function(resolve, reject){
-    User.getUserByEmail(email, function(err, user){
-      if(err)
-        reject(err);
-      else{
-        if(user == null){
-          resolve('null');
-        }
-        else
-          resolve(user);
-      }
-    });
-  });
-}
-
-let getUserByUsername = function(username){
-  return new Promise(function(resolve, reject){
-    User.getUserByUsername(username, function(err, user){
-      if(err)
-        reject(err);
-      else{
-        if(user == null)
-          resolve('null');
-        else
-          resolve(user);
-      }
-    });
-  });
-}
-
-let getUserBlogsByPage = function(username, pageNumber){
-  return new Promise(function(resolve, reject){
-    Blog.getUserBlogsByPage(username, myBlogs_NumberOfBlogsToDisplay, pageNumber, function(err, blogs){
-      if(err) reject(err);
-      else resolve(blogs);
-    });
-  });
-}
-
-let getUserBlogCount = function(username){
-  return new Promise(function(resolve, reject){
-    Blog.getUserBlogCountByUsername(username, function(err, blogCount){
-      if(err) reject(err);
-      else resolve(blogCount);
-    });
-  });
-}
-
-let getUserRecentBlogs = function(username, blogsToReturn){
-  return new Promise(function(resolve, reject){
-    Blog.getUserRecentBlogs(username, blogsToReturn, function(err, blogs){
-      if(err) reject(err);
-      else resolve(blogs);
-    });
-  });
-}
-
-let getUserFeaturedBlog = function(username){
-  return new Promise(function(resolve, reject){
-    Blog.getUsersFeaturedBlog(username, function(err, blog){
-      if(err) reject(err);
-      else resolve(blog);
-    });
-  });
-}
 
 //passport functions
 passport.use(new LocalStrategy(
