@@ -60,10 +60,7 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
 
   req.getValidationResult().then(function(result){
     if(!result.isEmpty()){
-          var errors = result.array().map(function (elem) {
-              return elem.msg;
-          });
-          console.log('There are following validation errors: ' + errors.join('&&'));
+          var errors = result.array().map(function (elem) { return elem.msg; });
           res.render('user/dashboard/createblog', { errors: errors });
     }
     else{
@@ -123,20 +120,22 @@ router.put('/:id', Auth.ensureAuthenticated, function(req, res){
     req.checkBody('body', 'Body of blog post is required.').notEmpty();
     req.checkBody('title', 'Blog post must have a title.').notEmpty();
 
-    let errors = req.validationErrors();
-
-    if(errors){
-      res.render('/user/dashboard/myblogs',{
-        stylesheet: 'user/dashboard/myblogs',
-        errors:errors
-      });
-    }
-    else{
-      Blog.updateBlogById(id, title, body, function(err, blog){
-        if(err) console.log(err);
-        else res.send('success');
-      });
-    }
+    //let errors = req.validationErrors();
+    req.getValidationResult().then(function(result){
+      if(!result.isEmpty()){
+            var errors = result.array().map(function (elem) { return elem.msg; });
+            res.render('/user/dashboard/myblogs',{
+              stylesheet: 'user/dashboard/myblogs',
+              errors:errors
+            });
+      }
+      else{
+        Blog.updateBlogById(id, title, body, function(err, blog){
+          if(err) console.log(err);
+          else res.send('success');
+        });
+      }
+    });//end validationResult
   }
 });
 

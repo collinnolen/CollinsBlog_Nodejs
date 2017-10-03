@@ -15,28 +15,28 @@ router.post('/:id', Auth.ensureAuthenticated, function(req, res){
 
   req.checkBody('comment', 'Comment can not be empty.').notEmpty();
 
-  var errors = req.validationErrors();
+  req.getValidationResult().then(function(result){
+    if(!result.isEmpty()){
+      var errors = result.array().map(function (elem) { return elem.msg; });
+      res.redirect('back',{
+        errors:errors
+      });
+    }
+    else{
+      var newComment = new _Comment({
+        post_id: req.params.id,
+        comment_timeposted: comment_timeposted,
+        comment_username: comment_username,
+        comment_author: comment_author,
+        comment_body: comment_body
+      });
 
-  if(errors){
-    res.redirect('back',{
-      errors:errors
-    });
-  }
-  else{
-    var newComment = new _Comment({
-      post_id: req.params.id,
-      comment_timeposted: comment_timeposted,
-      comment_username: comment_username,
-      comment_author: comment_author,
-      comment_body: comment_body
-    });
-
-
-    _Comment.createComment(newComment, function(err, blog){
-      if(err) console.log(err);
-      res.redirect('/blogs/'+req.params.id); //add message saying error occured
-    });
-  }
+      _Comment.createComment(newComment, function(err, blog){
+        if(err) console.log(err);
+        res.redirect('/blogs/'+req.params.id); //add message saying error occured
+      });
+    }
+  });
 });
 
 
@@ -44,7 +44,8 @@ router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
   var comment_id = req.params.id;
   if(req.query.postid === undefined){
     res.send('Post id was not included.');
-  }else{
+  }
+  else{
     var post_id = req.query.postid;
     _Comment.deleteCommentByPostIdAndCommentId(post_id, comment_id, function(err, comment){
       if(err) res.send(err);
