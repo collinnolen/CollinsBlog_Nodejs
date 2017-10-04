@@ -1,9 +1,11 @@
 {{#if errors}}
   {{#each errors}}
     <div class="alert alert-danger">
-      {{msg}}
+      {{this}}
     </div>
   {{/each}}
+{{else}}
+yo this is not an error.
 {{/if}}
 
 <div>
@@ -11,7 +13,7 @@
     <div class="card" id="myBlog-container">
       <div class="float_left">
         <a href="/blogs/{{post_id}}">{{post_title}}</a></br>
-        Post Date: {{time post_id}}
+        Post Date: {{time post_id false}}
       </div>
       <div class="float_right delete-button">
         {{#unless post_featured}}

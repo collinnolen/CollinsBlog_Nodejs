@@ -74,8 +74,8 @@ module.exports.makeFeatured = function(id, callback){
   Blog.findOneAndUpdate(query, {post_featured: true}, callback);
 }
 
-module.exports.removeFeatured = function(callback){
-  var query = {post_featured: true};
+module.exports.removeFeatured = function(username, callback){
+  var query = {post_username: username, post_featured: true};
   Blog.findOneAndUpdate(query, {post_featured: false}, callback);
 }
 

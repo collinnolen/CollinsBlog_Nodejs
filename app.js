@@ -29,8 +29,8 @@ const comments = require('./routes/comments');
 // // View engine
 var hbs = exphds.create({
   helpers: {
-    time: function(timeToConvert){
-      let longDate = new Date(parseInt(timeToConvert, 36));
+    time: function(timeToConvert, isLong){
+      let longDate = new Date( (isLong) ? parseInt(timeToConvert) : parseInt(timeToConvert, 36) );
       let shortDate = longDate.getMonth()+1 + '/' + longDate.getDate() + "/" + longDate.getFullYear();
       return shortDate;
     },

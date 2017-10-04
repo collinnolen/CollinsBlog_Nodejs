@@ -128,7 +128,7 @@ $(document).ready(function() {
     }).done(function(){
       hide_box('#blog-edit-prompt');
       $('#edit-box-container').remove();
-      window.location.reload();
+      location.reload();
       post_id='no-id';
     });
   });

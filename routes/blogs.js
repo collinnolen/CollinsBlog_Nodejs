@@ -17,8 +17,23 @@ const numberOfCommentsToShow = 10;
 //Blog routes
 router.get('/', function(req, res){
   var numberOfBlogsToReturn = 5;
-  Blog.getRecentBlogs(numberOfBlogsToReturn, function(err, blogs){
-    res.render('blog/bloghome', {stylesheet: 'blog/bloghome', blogs: blogs});
+
+  PromiseUtil.getFeaturedUser().then(function(user){
+    Promise.all([
+      PromiseUtil.getRecentBlogs(5),
+      PromiseUtil.getUserFeaturedBlog(user.username
+    )])
+    .then(function(values){
+      res.render('blog/bloghome',{
+        stylesheet: 'blog/bloghome',
+        blogs: values[0],
+        featuredblog: values[1][0]
+      });
+    }).catch(function(err){
+      console.log(err);
+    });
+  }).catch(function(err){
+    console.log(err);
   });
 });
 
@@ -80,7 +95,7 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
       });
 
       if(featured === true){
-        Blog.removeFeatured(function(){
+        Blog.removeFeatured(req.user.username, function(){
           Blog.createBlog(newBlogPost, function(err, blog){
             if(err) console.log(err);
             else res.redirect('/blogs/'+blog.post_id);
@@ -107,10 +122,9 @@ router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
 router.put('/:id', Auth.ensureAuthenticated, function(req, res){
   var id = req.params.id;
   if(req.query.featured === 'true'){
-
     var featured = true;
 
-    Blog.removeFeatured(function(err){
+    Blog.removeFeatured(req.user.username, function(err){
       if(err) res.send(err);
       else Blog.makeFeatured(id, function(){
         res.send('success');
@@ -128,9 +142,9 @@ router.put('/:id', Auth.ensureAuthenticated, function(req, res){
     req.getValidationResult().then(function(result){
       if(!result.isEmpty()){
         var errors = result.array().map(function (elem) { return elem.msg; });
-        res.render('/user/dashboard/myblogs',{
+        res.render('user/dashboard/myblogs',{
           stylesheet: 'user/dashboard/myblogs',
-          errors:errors
+          errors: errors
         });
       }
       else{

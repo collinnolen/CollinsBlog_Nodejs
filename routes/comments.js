@@ -10,7 +10,7 @@ var _Comment = require('../models/comment.js');
 
 // posts comment to blog post with :id
 router.post('/:id', Auth.ensureAuthenticated, function(req, res){
-  var comment_timeposted = microtime.now();
+  var comment_timeposted = Number(microtime.now().toString().substr(0,13));
   var comment_username = req.user.username;
   var comment_body = req.body.comment;
   var comment_author = req.user.first_name + ' ' + req.user.last_name;

@@ -33,6 +33,9 @@ module.exports.createUser = function(newUser, callback){
   });
 }//end createUser
 
+module.exports.getFeaturedUser = function(callback){
+  User.findOne({title: 'admin'}, callback);
+}//end getFeaturedUser
 
 module.exports.getUserById = function(id, callback){
   User.findById(id, callback);
