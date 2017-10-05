@@ -16,12 +16,12 @@ const User = require('../models/user.js');
 const Blog = require('../models/blog.js');
 const UnverifiedUser = require('../models/unverifiedUser.js');
 
-//Variables
-const myBlogs_NumberOfBlogsToDisplay = 10;
+// //Variables
+// const myBlogs_NumberOfBlogsToDisplay = 10;
 
 //register router functions
 router.get('/register', function(req, res){
-  res.render('user/register');
+  res.render('user/register', {stylesheet: 'user/register'});
 });
 
 router.post('/register', function(req, res){
@@ -166,54 +166,6 @@ router.get('/profile/:param1', function(req, res){
     })
     .catch(function(err){
       console.log(err);
-    });
-});
-
-
-//Dashboard router functions
-router.get('/dashboard', Auth.ensureAuthenticated, function(req, res){
-  Promise.all([
-      PromiseUtil.getUserRecentBlogs(req.user.username, 5),
-      PromiseUtil.getUserFeaturedBlog(req.user.username)
-    ])
-  .then(function(values){
-    res.render('user/dashboard/dashboard',
-     {stylesheet: 'user/dashboard/dashboard',
-      recentblogs: values[0],
-      featuredblog: values[1][0]});
-  })
-  .catch(function(err){
-    res.send('Failed');
-    console.log(err.message);
-  });
-});
-
-router.get('/dashboard/newblog', Auth.ensureAuthenticated, function(req, res){
-  res.render('user/dashboard/createBlog',
-   {stylesheet: 'user/dashboard/createBlog'});
-});
-
-router.get('/dashboard/myblogs', Auth.ensureAuthenticated, function(req, res){
-  var page;
-  if(!req.query.page || req.query.page < 1)
-    page = 1;
-  else
-    page = req.query.page;
-
-  Promise.all([
-    PromiseUtil.getUserBlogsByPage(req.user.username, page),
-    PromiseUtil.getUserBlogCount(req.user.username)
-   ])
-    .then(function(values){
-      let count = Math.ceil(values[1] / 10);
-      res.render('user/dashboard/myblogs',{
-         stylesheet: 'user/dashboard/myblogs',
-         blogCount: FileUtility.pageNumberJsonBuilder(count),
-         blogs: values[0]
-       });
-    })
-    .catch(function(errors){
-      console.log(errors);
     });
 });
 

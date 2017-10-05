@@ -5,9 +5,7 @@
 }
 
 .recent-post-container{
-  /*border-top:1px;
-  border-top-style:solid;
-  border-color: black;*/
+
 }
 
 .main-blog-content{
@@ -24,7 +22,6 @@
 
 #blog-home-container{
   width:100%;
-  display:flex;
 }
 
 #ative-post{

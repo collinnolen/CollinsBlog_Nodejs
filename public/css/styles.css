@@ -32,9 +32,9 @@ body {
 }
 
 /* Customize container */
-@media (min-width: 48em) {
+@media (min-width: 80em) {
   .container {
-    max-width: 46rem;
+    max-width: 78rem;
   }
 }
 .container-narrow > hr {
@@ -96,4 +96,13 @@ body {
 
 .hidden{
   display:none;
+}
+
+.center{
+  text-align: center;
+}
+
+#index-container{
+  width:100%;
+  text-align: center;
 }

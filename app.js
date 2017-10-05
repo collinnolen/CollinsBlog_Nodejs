@@ -22,6 +22,7 @@ const routes = require('./routes/index');
 const users = require('./routes/users');
 const blogs = require('./routes/blogs');
 const comments = require('./routes/comments');
+const dashboard = require('./routes/users/dashboard');
 
 // // Init Application
  const app = express();
@@ -103,6 +104,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/blogs', blogs);
 app.use('/comments', comments);
+app.use('/users/dashboard', dashboard);
 
 //set Port
 var port = process.env.PORT || 3000;

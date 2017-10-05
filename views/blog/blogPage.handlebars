@@ -1,27 +1,31 @@
 <h2>{{blog.post_title}}</h2>
 <p>{{blog.post_body}}</p>
 
-<div class="">
-  <ul class="recent-comment-list">
+
+<div class="card" id="comment-container">
+  {{#if comments}}
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item ul_label"><strong>Comments</strong></li>
     {{#each comments}}
-      <li class="recent-comment-container card">
-        <div class="comment-container">
+        <li class="list-group-item">
           <div class="comment-body" id="{{comment_timeposted}}-comment-body">{{comment_body}}</div>
           <div class="comment-author">-{{comment_author}},  <span>posted on {{time comment_timeposted true}}</span></div>
-        </div>
-        <div class="comment-buttons">
-        {{#if ../user}}
-          {{#matchingUsers comment_username ../user}}
-            <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="delete-comment-button">Delete</a>
-            <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="edit-comment-button">Edit</a>
-          {{else}}
-            <a href="#" class="comment-report-link">Report</a>
-          {{/matchingUsers}}
-        {{/if}}
-        </div>
-      </li>
+          <div class="comment-buttons">
+          {{#if ../user}}
+            {{#matchingUsers comment_username ../user}}
+              <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="delete-comment-button">Delete</a>
+              <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="edit-comment-button">Edit</a>
+            {{else}}
+              <a href="#" class="comment-report-link">Report</a>
+            {{/matchingUsers}}
+          {{/if}}
+          </div>
+        </li>
     {{/each}}
   </ul>
+  {{else}}
+  <h5 class="card-title center firstToPost">Be the first to comment on this post!</h5>
+  {{/if}}
 </div>
 
 {{#if user}}

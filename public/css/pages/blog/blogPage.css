@@ -6,3 +6,18 @@
 .recent-comment-container{
   padding:1%;
 }
+
+.ul_label{
+  padding: 1px;
+  background-color:#F0F0F0;
+}
+
+
+#comment-container{
+  margin: auto;
+  width:50%;
+}
+
+.firstToPost{
+  margin: 15px;
+}
