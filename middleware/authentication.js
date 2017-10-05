@@ -6,6 +6,6 @@ module.exports.ensureAuthenticated = function(req, res, next){
     }
     else{
       req.flash('error_msg', 'You are not logged in');
-      res.redirect('/users/login'+ QueryUtility.redirectEncodeQueryBuilder(req.url));
+      res.redirect('/users/login'+ QueryUtility.redirectEncodeQueryBuilder(req.originalUrl));
     }
 }

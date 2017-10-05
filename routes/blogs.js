@@ -113,9 +113,17 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
 });
 
 router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
-  Blog.deleteBlogById(req.params.id, function(err){
-    if(err) console.log(err);
-    else res.send('success');
+  Promise.all([
+    PromiseUtil.deleteBlogById(req.params.id),
+    PromiseUtil.deleteAllCommentsOnBlogPost(req.params.id)
+  ])
+  .then(function(values){
+    req.flash('success_msg', 'Successfully removed blog post ' + req.params.id + '.');
+    res.send('success');
+  })
+  .catch(function(err){
+    req.flash('error_msg', 'Could not remove blog post ' + req.params.id + '.');
+    res.send('failed');
   });
 });
 

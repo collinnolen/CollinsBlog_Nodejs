@@ -58,10 +58,7 @@ module.exports.updateBlogById = function(id, title, body, callback){
 
 module.exports.deleteBlogById = function(id, callback){
   var query = {post_id : id};
-  _Comment.deleteCommentsByPostId(id, function(err){
-    if (err) console.log(err);
-    Blog.find(query).remove(callback);
-  });
+  Blog.find(query).remove(callback);
 }
 
 module.exports.getUserFeaturedBlog = function(username, callback){

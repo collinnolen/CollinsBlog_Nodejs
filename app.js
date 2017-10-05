@@ -35,6 +35,14 @@ var hbs = exphds.create({
       let shortDate = longDate.getMonth()+1 + '/' + longDate.getDate() + "/" + longDate.getFullYear();
       return shortDate;
     },
+    timeLong : function(timeToConvert, isLong){
+      let dateObj = new Date( (isLong) ? parseInt(timeToConvert) : parseInt(timeToConvert, 36) );
+      var options = {
+        weekday: "long", year: "numeric", month: "short",
+        day: "numeric", hour: "2-digit", minute: "2-digit"
+      };
+      return dateObj.toLocaleDateString('en-us', options);
+    },
     matchingUsers: function(userA, userB, options){
       if(userA === undefined || userB === undefined)
         return options.inverse();
@@ -47,7 +55,7 @@ var hbs = exphds.create({
   defaultLayout: 'layout'
 });
 app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars', hbs.engine); //exphds({defaultLayout:'layout'})
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 // //BodyParser middleware

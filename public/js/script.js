@@ -133,12 +133,12 @@ $(document).ready(function() {
     });
   });
 
-  $('.comment-container').on('click', '#edit-comment-container #submit-comment-edit', function(e){
+  $('#comment-section-list').on('click', '.list-group-item #edit-comment-container #submit-comment-edit', function(e){
     var new_value = $('#textArea-edit-comment').val();
     var ids = $('#textArea-edit-comment').attr('data').split(',');
     var commentid = ids[0];
     var postid = ids[1];
-
+    console.log('here');
     $.ajax({
     type: "PUT",
     contentType: "application/json",
@@ -183,7 +183,6 @@ $(document).ready(function() {
 
 
     $('#'+_data.comment_timeposted+'-comment-body').replaceWith($container);
-    console.log('#'+_data.comment_timeposted+'-comment-body');
   }
 
   //creates editbox

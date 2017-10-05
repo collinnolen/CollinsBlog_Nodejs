@@ -91,3 +91,21 @@ module.exports.getUserRecentBlogs = function(username, blogsToReturn){
     });
   });
 }
+
+module.exports.deleteBlogById = function(id){
+  return new Promise(function(resolve, reject){
+    Blog.deleteBlogById(id, function(err){
+      if(err) reject(err);
+      else resolve('success');
+    });
+  });
+}
+
+module.exports.deleteAllCommentsOnBlogPost = function(id){
+  return new Promise(function(resolve, reject){
+    _Comment.deleteCommentsByPostId(id, function(err){
+      if(err) reject(err);
+      else resolve('success');
+    });
+  });
+}

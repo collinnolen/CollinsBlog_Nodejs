@@ -17,7 +17,7 @@ const Blog = require('../models/blog.js');
 const UnverifiedUser = require('../models/unverifiedUser.js');
 
 // //Variables
-// const myBlogs_NumberOfBlogsToDisplay = 10;
+
 
 //register router functions
 router.get('/register', function(req, res){
@@ -131,7 +131,7 @@ router.post('/login',
     }
     else {
       var redirectUrl = QueryUtility.redirectDecodeQueryBuilder(req.query.redirect);
-      res.redirect('/users' + redirectUrl);
+      res.redirect(redirectUrl);
     }
   });
 
