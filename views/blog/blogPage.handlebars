@@ -1,11 +1,16 @@
 <div class="blog-post-container">
+  <div class="blog-img">
+    <img src="/images/{{blog.post_id}}" alt="" id="blog-image">
+  </div>
+
   <div class="blog-header">
     <h2 class="center">{{blog.post_title}}</h2>
     <p class="center">
       Posted: {{timeLong blog.post_id false}}  </br>
-      Author: {{blog.post_author}}
+      By: {{blog.post_author}}
     </p>
   </div>
+
   <div class="blog-body">
     <p>{{blog.post_body}}</p>
   </div>

@@ -7,10 +7,12 @@ const Auth = require('../middleware/authentication.js');
 
 //custom modules
 const PromiseUtil = require('../modules/promises.js')
+const FileUtility = require('../modules/fileUtility.js');
 
 //models
 const Blog = require('../models/blog.js');
 const _Comment = require('../models/comment.js');
+const Image = require('../models/image.js');
 
 const numberOfCommentsToShow = 10;
 
@@ -88,11 +90,25 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
         post_id : id,
         post_author : author,
         post_username : username,
-        //post_img : img,
         post_title : title,
         post_body : body,
         post_featured : featured
       });
+
+      if(!req.files)
+        console.log('no files');
+      else {
+        Image.writeFileToServer(req.files.picture, username, id, 'BlogPicture', function(err, filename){
+          if(err) console.log(err);
+          Image.writeImageToDb(filename, username, id, function(err, filename){
+            if(err) console.log(err);
+            FileUtility.cleanUploadFiles(filename, function(err){
+              if(err) return console.log(err);
+              console.log('File deleted');
+            });
+          });
+        });
+      }
 
       if(featured === true){
         Blog.removeFeatured(req.user.username, function(){

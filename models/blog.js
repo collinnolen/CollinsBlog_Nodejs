@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const _Comment = require('./comment.js');
 
 var BlogSchema = mongoose.Schema({
   post_id:{

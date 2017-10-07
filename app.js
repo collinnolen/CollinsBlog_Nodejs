@@ -11,6 +11,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const mongo = require('mongodb');
 const mongoose = require('mongoose');
+const fileUpload = require('express-fileupload');
 const nodemailer = require('nodemailer');
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.DATABASE_URL, {useMongoClient:true});
@@ -23,9 +24,13 @@ const users = require('./routes/users');
 const blogs = require('./routes/blogs');
 const comments = require('./routes/comments');
 const dashboard = require('./routes/users/dashboard');
+const images = require('./routes/images');
 
 // // Init Application
  const app = express();
+
+ //fileuploading
+ app.use(fileUpload());
 
 // // View engine
 var hbs = exphds.create({
@@ -113,6 +118,7 @@ app.use('/users', users);
 app.use('/blogs', blogs);
 app.use('/comments', comments);
 app.use('/users/dashboard', dashboard);
+app.use('/images', images);
 
 //set Port
 var port = process.env.PORT || 3000;
