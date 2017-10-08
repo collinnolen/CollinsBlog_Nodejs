@@ -22,14 +22,12 @@ router.get('/', function(req, res){
 
   PromiseUtil.getFeaturedUser().then(function(user){
     Promise.all([
-      PromiseUtil.getRecentBlogs(5),
-      PromiseUtil.getUserFeaturedBlog(user.username
-    )])
+      PromiseUtil.getRecentBlogs(15)
+    ])
     .then(function(values){
       res.render('blog/bloghome',{
         stylesheet: 'blog/bloghome',
         blogs: values[0],
-        featuredblog: values[1][0]
       });
     }).catch(function(err){
       console.log(err);

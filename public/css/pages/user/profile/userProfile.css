@@ -1,42 +1,26 @@
-.blog-container{
+.ul_label{
+  padding: 1px;
+  padding-left: 5px;
+  background-color:#F0F0F0;
+}
+
+.list-group-item{
   width:100%;
-  float: right;
+}
+
+.recent-blogs-list-item{
   padding: 5px;
 }
 
-#post-contents{
-  padding: 5px;
-}
-
-#post-contents h2{
-  text-align: center;
-}
-
-#blogs{
-  padding: 5px;
-}
-
-.title{
-  overflow: hidden;
-  text-align: center;
+.no-overflow{
   display:inline-block;
-}
-.date{
+  width:100%;
+  text-overflow: ellipsis;
   overflow: hidden;
-  display:inline-block;
+  white-space: nowrap;
 }
 
-.blog-container, #ative-post{
-  display: inline;
-}
-
-#ative-post{
-  width:100%;
-  float: left;
-  padding: 5px;
-}
-
-#user-container{
-  width:100%;
-  display:flex;
+#featured-header{
+  text-align:center;
+  background-color:#F0F0F0;
 }

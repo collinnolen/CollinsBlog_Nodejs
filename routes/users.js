@@ -146,22 +146,18 @@ router.get('/logout', Auth.ensureAuthenticated, function(req, res){
 
 //User page routes
 router.get('/profile/:param1', function(req, res){
-  var page;
-
-  if(req.query.page === undefined)
-    page = 1;
-  else
-    page = req.query.page;
-
   Promise.all([
-    PromiseUtil.getUserBlogsByPage(req.params.param1, page),
-    PromiseUtil.getUserByUsername(req.params.param1)
+    PromiseUtil.getUserRecentBlogs(req.params.param1, 5),
+    PromiseUtil.getUserByUsername(req.params.param1),
+    PromiseUtil.getUserFeaturedBlog(req.params.param1)
    ])
     .then(function(values){
+      console.log(values[2]);
       res.render('user/profile/userProfile', {
         stylesheet: 'user/profile/userProfile',
-        User: values[1],
-        Blogs: values[0]
+        blogs: values[0],
+        user: values[1],
+        featblog: values[2][0]
       });
     })
     .catch(function(err){

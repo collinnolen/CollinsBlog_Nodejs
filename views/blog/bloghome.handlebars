@@ -1,31 +1,14 @@
-<div id="blog-home-container">
-  <div id="ative-post" class="col-lg-8">
-    <div class="card">
-      {{#if featuredblog}}
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item ul_label"><strong>Featured Blog</strong></li>
-        <li class="list-group-item">
-          <h3 class="card-title" id="featured_title">{{featuredblog.post_title}}</h3>
-          <p class="card-text" id="featured_body">{{featuredblog.post_body}}</p>
-        </li>
-      </ul>
-      {{/if}}
+<div id="blog-home-container" class="card-columns">
+  {{#each blogs}}
+    <div class="card blog-card">
+      <img src="/images/{{post_id}}" class="card-img-top" alt="">
+      <div class="card-block">
+        <h4 class="card-title"><a href="/blogs/{{post_id}}">{{post_title}}</a></h4>
+        <p class="card-text">{{shortText 200 post_body}}</p>
+      </div>
+      <div class="card-block">
+        <p class="card-text"><a href="/users/profile/{{post_username}}">{{post_author}}</a></p>
+      </div>
     </div>
-  </div>
-  <div class="col-lg-4 recent-blog-posts" id="recent_blogs">
-    <div class="recent-post-container card">
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item ul_label"><strong>Recent Blogs</strong></li>
-        {{#each blogs}}
-        <li class="list-group-item recent-blogs-list-item">
-          <a href="blogs/{{post_id}}">
-            <span class="no-overflow">{{post_title}}</span>
-          </a>
-          <span class="no-overflow">{{post_author}}</span>
-        </li>
-        {{/each}}
-      </ul>
-    </div>
-
-  </div>
+  {{/each}}
 </div>

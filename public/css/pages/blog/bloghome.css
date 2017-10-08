@@ -1,58 +1,10 @@
-.recent-post-container .author, .title{
-  overflow: hidden;
-  text-align: left;
-  padding:2px;
+.blog-card{
+  position:relative;
+  display: inline-block;
+
+  max-width: 20rem;
 }
 
-.recent-post-container{
-
-}
-
-.main-blog-content{
-  float: left;
-}
-
-.recent-blog-posts{
-  float: right;
-}
-
-.recent-post-container{
-  font-size: 12px;
-}
-
-#blog-home-container{
-  width:100%;
-}
-
-#ative-post{
-  width:100%;
-  float: left;
-  padding: 5px;
-  display:inline;
-}
-
-#recent_blogs{
-  padding: 5px;
-  display:inline;
-}
-
-#blog-home-container h2, #blog-home-container h3{
-  text-align: center;
-}
-
-.no-overflow{
-  display:inline-block;
-  width:100%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.ul_label{
-  padding: 1px;
-  background-color:#F0F0F0;
-}
-
-.recent-blogs-list-item{
-  padding: 5px;
+.card-block{
+  padding: 10px;
 }

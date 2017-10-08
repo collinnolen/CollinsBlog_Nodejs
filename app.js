@@ -55,6 +55,14 @@ var hbs = exphds.create({
         return options.fn();
       else
         return options.inverse();
+    },
+    shortText: function(length, text){
+      let textToReturn = '';
+      let iterations = (length >= text.length) ? text.length : length;
+      for(var i =0; i < iterations; i++){
+        textToReturn += text[i];
+      }
+      return textToReturn + ((text.length > iterations) ? '...' : '');
     }
   },
   defaultLayout: 'layout'
