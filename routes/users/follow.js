@@ -15,6 +15,12 @@ router.get('/:user_username', Auth.ensureAuthenticated, function(req, res){
   let followUser = req.params.user_username;
   let currentUser = req.user.username;
 
+  if (req.params.user_username === req.user.username){
+    req.flash('error_msg', 'You cannot follow yourself!');
+    res.redirect('back');
+    return;
+  }
+
   //fetch both user and user-to-follow from database.
   Promise.all([
     PromiseUtil.getUserByUsername(followUser),
@@ -22,7 +28,7 @@ router.get('/:user_username', Auth.ensureAuthenticated, function(req, res){
   ])
   //fetch success
   .then((values) => {
-    let userToFollow = values[0];
+    let userToFollow = (values[0] === 'null') ? 'null' : values[0].username;
     let followingList = values[1].following;
 
     if(userToFollow === 'null'){
@@ -30,18 +36,18 @@ router.get('/:user_username', Auth.ensureAuthenticated, function(req, res){
       res.redirect('back');
     }
     else if(Util.arrayHasObject(followingList, userToFollow)){
-      req.flash('error_msg', 'You are already following user ' + userToFollow.username +'.');
+      req.flash('error_msg', 'You are already following user ' + userToFollow +'.');
       res.redirect('back');
     }
     else{
-      Promise.Util.followUserByUsername(userToFollow, currentUser)
+      PromiseUtil.followUserByUsername(userToFollow, currentUser)
         .then(() =>{
-          req.flash('success_msg', 'You are now following user ' + userToFollow.username + '.');
+          req.flash('success_msg', 'You are now following user ' + userToFollow + '.');
           res.redirect('back');
         })
         .catch((err)=>{
           console.log(err);
-          req.flash('error_msg', 'Could not follow user ' + userToFollow.username +'.');
+          req.flash('error_msg', 'Could not follow user ' + userToFollow +'.');
           res.redirect('back');
         })
     }
@@ -61,7 +67,6 @@ router.delete('/:user_username', function(req, res){
     .then(() => {
       req.flash('success_msg', 'You are no longer following user ' + userToUnfollow + '.');
       res.send('success');
-      console.log('success');
     })
     .catch((error) => {
       console.log(error);

@@ -146,17 +146,24 @@ router.get('/logout', Auth.ensureAuthenticated, function(req, res){
 
 //User page routes
 router.get('/profile/:param1', function(req, res){
+  //Checks if a user is logged in, if not sets username to empty string.
+  let username = (req.user === undefined) ? '' : req.user.username;
+
   Promise.all([
     PromiseUtil.getUserRecentBlogs(req.params.param1, 5),
     PromiseUtil.getUserByUsername(req.params.param1),
-    PromiseUtil.getUserFeaturedBlog(req.params.param1)
+    PromiseUtil.getUserFeaturedBlog(req.params.param1),
+    PromiseUtil.getUserByUsername(username)
    ])
     .then(function(values){
       res.render('user/profile/userProfile', {
         stylesheet: 'user/profile/userProfile',
+        script: 'followingScript',
         blogs: values[0],
-        user: values[1],
-        featblog: values[2][0]
+        pageUser: values[1],
+        featblog: values[2][0],
+        //If user is set to 'null' send undefined (no one logged in.)
+        user: (values[3] === 'null') ? undefined : values[3]
       });
     })
     .catch(function(err){

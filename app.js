@@ -64,6 +64,13 @@ var hbs = exphds.create({
         textToReturn += text[i];
       }
       return textToReturn + ((text.length > iterations) ? '...' : '');
+    },
+    checkFollowList: function(list, name, options){
+      for(let i = 0; i < list.length; i++){
+        if(list[i] === name)
+          return options.fn();
+      }
+      return options.inverse();
     }
   },
   defaultLayout: 'layout'

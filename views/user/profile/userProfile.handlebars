@@ -1,6 +1,18 @@
 <div class="" id="user-container">
-  <div class="row">
-    <a class="btn btn-outline-primary" href="/users/follow/{{user.username}}">Follow {{user.first_name}}</a>
+  <div class="row profile-header">
+
+    {{#if user}}
+      {{#matchingUsers user.username pageUser.username}}
+      {{else}}
+        {{#checkFollowList ../user.following ../pageUser.username}}
+          <button class="btn btn-outline-danger unfollow-user float_right" data="{{../pageUser.username}}">Unfollow</button>
+          {{else}}
+          <a class="btn btn-outline-primary float_right" href="/users/follow/{{../pageUser.username}}">Follow {{../pageUser.first_name}}</a>
+          {{/checkFollowList}}
+      {{/matchingUsers}}
+    {{else}}
+      <a href="/users/login?redirect=-users-profile-{{pageUser.username}}" class="btn btn-outline-primary">Login To Follow!</a>
+    {{/if}}
   </div>
 
   <div class="row">
