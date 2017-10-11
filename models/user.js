@@ -66,7 +66,7 @@ module.exports.unfollowUserByUsername = function(userToUnfollow, currentUser, ca
 
 module.exports.comparePassword = function(canidatePass, hash, callback){
   bcrypt.compare(canidatePass, hash, function(err, isMatch) {
-    if(err) console.log(err); //todo
+    if(err) callback(err, false);
     callback(null, isMatch);
   });
 }//end comparePassword

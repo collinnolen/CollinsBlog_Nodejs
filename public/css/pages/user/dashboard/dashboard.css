@@ -18,7 +18,7 @@ strong{
   padding-left:10px;
 }
 
-#featured_title{
+.card-title{
   text-align: center;
 }
 
@@ -30,10 +30,46 @@ strong{
   padding: 5px;
 }
 
+#noFollowingBlogs{
+  text-align: center;
+  width: 100%;
+}
+
+.explore-btn{
+  display:inline-block;
+  margin: 0 auto;
+  margin: 10px;
+}
+
+.follow-blog-body{
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  border-bottom-color: #F0F0F0;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.card-img{
+  display: block;
+  max-height: 15rem;
+  width: auto;
+  height: auto;
+  margin: auto;
+}
+
 .no-overflow{
   display:inline-block;
   width:100%;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+#following-blog{
+  margin-bottom: 20px;
+}
+
+#following-users{
+  margin-bottom: 20px;
 }

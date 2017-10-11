@@ -5,23 +5,20 @@ const router = express.Router();
 const QueryUtility = require('../../modules/queryUtility.js');
 const Auth = require('../../middleware/authentication.js');
 const FileUtility = require('../../modules/fileUtility.js');
-const PromiseUtil = require('../../modules/promises.js');
-
-//Mongoose Models
-const User = require('../../models/user.js');
-const Blog = require('../../models/blog.js');
+const Blog = require('../../modules/promises/blogPromises.js');
+const User = require('../../modules/promises/userPromises.js');
 
 //Dashboard router functions
 router.get('/', Auth.ensureAuthenticated, function(req, res){
   Promise.all([
-      PromiseUtil.getUserRecentBlogs(req.user.username, 5),
-      PromiseUtil.getUserFeaturedBlog(req.user.username)
+      Blog.getUserRecentBlogs(req.user.username, 5),
+      Blog.getUserFollowingRecentBlogs(req.user.following, 5, 0)
     ])
   .then(function(values){
     res.render('user/dashboard/dashboard',
      {stylesheet: 'user/dashboard/dashboard',
       recentblogs: values[0],
-      featuredblog: values[1][0]});
+      followingBlogs: values[1]});
   })
   .catch(function(err){
     res.send('Failed');
@@ -42,8 +39,8 @@ router.get('/myblogs', Auth.ensureAuthenticated, function(req, res){
     page = req.query.page;
 
   Promise.all([
-    PromiseUtil.getUserBlogsByPage(req.user.username, page),
-    PromiseUtil.getUserBlogCount(req.user.username)
+    Blog.getUserBlogsByPage(req.user.username, page),
+    Blog.getUserBlogCount(req.user.username)
    ])
     .then(function(values){
       let count = Math.ceil(values[1] / 10);
@@ -59,7 +56,7 @@ router.get('/myblogs', Auth.ensureAuthenticated, function(req, res){
 });
 
 router.get('/following', Auth.ensureAuthenticated, function(req, res){
-  PromiseUtil.getUserByUsername(req.user.username)
+  User.getUserByUsername(req.user.username)
     .then((user) =>{
       res.render('user/dashboard/following',{
         script: 'followingScript',

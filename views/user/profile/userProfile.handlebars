@@ -1,18 +1,27 @@
 <div class="" id="user-container">
   <div class="row profile-header">
+    <div class="author-data-container float_left">
+      <p id="pageUser-title"><strong>{{pageUser.first_name}} {{pageUser.last_name}}</strong></p>
+      <p>Username: {{pageUser.username}}</p>
+    </div>
+    <div class="follers">
 
-    {{#if user}}
-      {{#matchingUsers user.username pageUser.username}}
+    </div>
+    <div class="follow-button-container float_right">
+      {{#if user}}
+        {{#matchingUsers user.username pageUser.username}}
+        {{else}}
+          {{#checkFollowList ../user.following ../pageUser.username}}
+            <button class="btn btn-outline-danger unfollow-user float_right" data="{{../pageUser.username}}">Unfollow</button>
+            {{else}}
+            <a class="btn btn-outline-primary float_right" href="/users/follow/{{../pageUser.username}}">Follow {{../pageUser.first_name}}</a>
+            {{/checkFollowList}}
+        {{/matchingUsers}}
       {{else}}
-        {{#checkFollowList ../user.following ../pageUser.username}}
-          <button class="btn btn-outline-danger unfollow-user float_right" data="{{../pageUser.username}}">Unfollow</button>
-          {{else}}
-          <a class="btn btn-outline-primary float_right" href="/users/follow/{{../pageUser.username}}">Follow {{../pageUser.first_name}}</a>
-          {{/checkFollowList}}
-      {{/matchingUsers}}
-    {{else}}
-      <a href="/users/login?redirect=-users-profile-{{pageUser.username}}" class="btn btn-outline-primary">Login To Follow!</a>
-    {{/if}}
+        <a href="/users/login?redirect=-users-profile-{{pageUser.username}}" class="btn btn-outline-primary float_right">Login To Follow!</a>
+      {{/if}}
+    </div>
+
   </div>
 
   <div class="row">
@@ -23,7 +32,7 @@
         </div>
         <img src="/images/{{featblog.post_id}}" alt="" class="card-img">
         <div class="card-block">
-          <h4 class="card-title">{{featblog.post_title}}</h4>
+          <h4 class="card-title center">{{featblog.post_title}}</h4>
           <p class="card-text">{{shortText 300 featblog.post_body}}</p>
           <div class="link-container">
             <a href="/blogs/{{featblog.post_id}}" class="btn btn-primary">Go to Blog</a>

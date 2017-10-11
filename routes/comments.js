@@ -5,8 +5,10 @@ const microtime = require('microtime');
 //middleware
 const Auth = require('../middleware/authentication.js');
 const QueryChecker = require('../middleware/queryChecker.js');
+const _Comment = require('../modules/promises/commentPromises.js');
 
-var _Comment = require('../models/comment.js');
+//comment Model
+const CommentModel = require('../models/comment.js')
 
 // posts comment to blog post with :id
 router.post('/:id', Auth.ensureAuthenticated, function(req, res){
@@ -25,7 +27,7 @@ router.post('/:id', Auth.ensureAuthenticated, function(req, res){
       });
     }
     else{
-      var newComment = new _Comment({
+      var newComment = new CommentModel({
         post_id: req.params.id,
         comment_timeposted: comment_timeposted,
         comment_username: comment_username,
@@ -33,18 +35,26 @@ router.post('/:id', Auth.ensureAuthenticated, function(req, res){
         comment_body: comment_body
       });
 
-      _Comment.createComment(newComment, function(err, blog){
-        if(err) console.log(err);
-        res.redirect('/blogs/'+req.params.id); //add message saying error occured
-      });
+      _Comment.createComment(newComment)
+        .then(function(blog){
+          res.redirect('/blogs/'+req.params.id);
+        })
+        .catch(function(err){
+          console.log(err);
+        })
     }
   });
 });
 
 router.get('/:id', QueryChecker.commentAndPostId, function(req, res){
-  _Comment.getCommentByPostIdAndCommentId(req.query.post_id, req.params.id, function(err, comment){
-    res.send(JSON.stringify(comment));
-  });
+  _Comment.getCommentByPostIdAndCommentId(req.query.post_id, req.params.id)
+    .then(function(comment){
+      res.send(JSON.stringify(comment));
+    })
+    .catch(function(err){
+      console.log(err);
+      res.send('Error has occured');
+    })
 });
 
 router.put('/:id', QueryChecker.postId, Auth.ensureAuthenticated, function(req, res){
@@ -60,10 +70,13 @@ router.put('/:id', QueryChecker.postId, Auth.ensureAuthenticated, function(req, 
       });
     }
     else{
-      _Comment.updateCommentByPostIdAndCommentId(req.query.post_id, req.params.id, body, function(err, comment){
-        if(err) res.send('Failed');
-        else res.send('Success');
-      });
+      _Comment.updateCommentByPostIdAndCommentId(req.query.post_id, req.params.id, body)
+        .then(function(comment){
+          res.send('Success');
+        })
+        .catch(function(err){
+          res.send(err);
+        })
     }
   });
 
@@ -77,17 +90,20 @@ router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
   }
   else{
     var post_id = req.query.postid;
-    _Comment.deleteCommentByPostIdAndCommentId(post_id, comment_id, function(err, comment){
-      if(err) res.send(err);
-      if(comment.result.n === 0){
-        req.flash('error_msg', 'Comment ' + comment_id + ' couldn\'t be deleted from post ' + post_id +'.');
-        res.send('Failed to delete comment '+ comment_id);
-      }
-      else{
-        req.flash('success_msg', 'Comment ' + comment_id + ' successfully deleted from post ' + post_id +'.')
-        res.send('Successfully delete comment ' + comment_id + ' from post '+ post_id + '.');
-      }
-    });
+    _Comment.deleteCommentByPostIdAndCommentId(post_id, comment_id)
+      .then(function(comment){
+        if(comment.result.n === 0){
+          req.flash('error_msg', 'Comment ' + comment_id + ' couldn\'t be deleted from post ' + post_id +'.');
+          res.send('Failed to delete comment '+ comment_id);
+        }
+        else{
+          req.flash('success_msg', 'Comment ' + comment_id + ' successfully deleted from post ' + post_id +'.')
+          res.send('Successfully delete comment ' + comment_id + ' from post '+ post_id + '.');
+        }
+      })
+      .catch(function(err){
+        res.send(err);
+      })
   }
 });
 

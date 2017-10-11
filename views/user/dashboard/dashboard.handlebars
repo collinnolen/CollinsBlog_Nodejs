@@ -7,6 +7,7 @@
     <div class="row-fluid" id="button-row">
       <div id="dashboard-buttons" class="column">
         <a class="btn btn-outline-primary" href="/users/dashboard/following">Users Your Following</a>
+        <a class ="btn btn-outline-primary" href="/users/profile/{{user.username}}">Your Profile</a>
         <a class="btn btn-outline-primary" href="/users/dashboard/newblog">New Blog</a>
         <a class="btn btn-outline-primary" href="/users/dashboard/myblogs?page=1">Manage Blogs</a>
       </div>
@@ -14,28 +15,40 @@
 
     <div class="row" id="main-content-row">
       <div class="col-lg-8">
-        <div class="card">
-          {{#if featuredblog}}
+        <div class="card" id="following-blogs">
+          {{#if followingBlogs}}
           <ul class="list-group list-group-flush">
-            <li class="list-group-item ul_label"><strong>Featured Blog</strong></li>
+            <li class="list-group-item ul_label"><strong>Recent Blogs From Users You Follow</strong></li>
+            {{#each followingBlogs}}
             <li class="list-group-item">
-              <h3 class="card-title" id="featured_title">{{featuredblog.post_title}}</h3>
-              <p class="card-text" id="featured_body">{{featuredblog.post_body}}</p>
+              <img src="/images/{{post_id}}" alt="" class="card-img">
+              <div class="card-block follow-blog-body">
+                <h3 class="card-title"><a href="/blogs/{{post_id}}">{{post_title}}</a></h3>
+                <p class="card-text" id="featured_body">{{shortText 200 post_body}}</p>
+              </div>
+              <div class="card-block">
+                <a href="/users/profile/{{post_username}}" class="card-text float_left">{{post_author}}</a>
+                <span class="card-text float_right">{{timeLong post_id false}}</span>
+              </div>
             </li>
+            {{/each}}
           </ul>
           {{else}}
-            <a class="btn btn-primary" href="dashboard/myblogs?page=1">Add a featured blog!</a>
+            <div class="card-block" id="noFollowingBlogs">
+              <p class="card-title">You are not following anyone!</p>
+              <a class="btn btn-primary explore-btn" href="/blogs">Explore and start following!</a>
+            </div>
           {{/if}}
         </div>
       </div>
       <div class="col-lg-4">
-        <div class="card">
+        <div class="card" id="following-users">
           <ul class="list-group list-group-flush">
-            <li class="list-group-item ul_label"><strong>Recent Blogs</strong></li>
-            {{#each recentblogs}}
+            <li class="list-group-item ul_label"><strong>Users You Follow</strong></li>
+            {{#each user.following}}
               <li class="list-group-item recent-blogs-list-item">
-                <a href="/blogs/{{post_id}}">
-                  <span class="no-overflow">{{post_title}}</span>
+                <a href="/blogs/{{this}}">
+                  <span class="no-overflow">{{this}}</span>
                 </a>
               </li>
             {{/each}}

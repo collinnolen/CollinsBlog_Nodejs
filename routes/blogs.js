@@ -6,12 +6,13 @@ const microtime = require('microtime');
 const Auth = require('../middleware/authentication.js');
 
 //custom modules
-const PromiseUtil = require('../modules/promises.js')
+const User = require('../modules/promises/userPromises.js');
+const Blog = require('../modules/promises/blogPromises.js');
+const _Comment = require('../modules/promises/commentPromises.js');
 const FileUtility = require('../modules/fileUtility.js');
 
 //models
-const Blog = require('../models/blog.js');
-const _Comment = require('../models/comment.js');
+const BlogModel = require('../models/blog.js');
 const Image = require('../models/image.js');
 
 const numberOfCommentsToShow = 10;
@@ -20,9 +21,9 @@ const numberOfCommentsToShow = 10;
 router.get('/', function(req, res){
   var numberOfBlogsToReturn = 5;
 
-  PromiseUtil.getFeaturedUser().then(function(user){
+  User.getFeaturedUser().then(function(user){
     Promise.all([
-      PromiseUtil.getRecentBlogs(15)
+      Blog.getRecentBlogs(15)
     ])
     .then(function(values){
       res.render('blog/bloghome',{
@@ -38,26 +39,40 @@ router.get('/', function(req, res){
 });
 
 router.get('/:id', function(req, res){
-  var username;
+  var user;
   if(req.user === undefined)
-    username = undefined;
+    user = undefined;
   else
-    username = req.user.username;
+    user = req.user;
 
-  Blog.getBlogByPostId(req.params.id, function(err, blog){
-    if(req.query.json != null){
-      res.send(JSON.stringify(blog));
-    }
-    else if(blog){
-      _Comment.getBlogComments(blog.post_id, numberOfCommentsToShow, function(err, comments){
-        res.render('blog/blogPage', {stylesheet: 'blog/blogPage', user: username, blog: blog, comments: comments});
-      });
-    }
-    else{
-      req.flash('error_msg', 'Blog post ' + req.params.id + ' does not exist.');
-      res.redirect('/blogs');
-    }
-  });
+  Blog.getBlogByPostId(req.params.id)
+    .then(function(blog){
+      if(req.query.json != null){
+        res.send(JSON.stringify(blog));
+      }
+      else if(blog){
+        _Comment.getBlogComments(blog.post_id, numberOfCommentsToShow)
+          .then(function(comments){
+            res.render('blog/blogPage', {
+              stylesheet: 'blog/blogPage',
+              user: user,
+              blog: blog,
+              script : 'followingScript',
+              comments: comments
+            });
+          })
+          .catch(function(error){
+            console.log(error);
+          })
+      }
+      else{
+        req.flash('error_msg', 'Blog post ' + req.params.id + ' does not exist.');
+        res.redirect('/blogs');
+      }
+    }).catch(function(error){
+      console.log(error);
+      res.send(error);
+    });
 });
 
 router.post('/', Auth.ensureAuthenticated, function(req, res){
@@ -84,7 +99,7 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
           res.render('user/dashboard/createblog', { errors: errors });
     }
     else{
-      var newBlogPost= new Blog({
+      var newBlogPost= new BlogModel({
         post_id : id,
         post_author : author,
         post_username : username,
@@ -109,18 +124,25 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
       }
 
       if(featured === true){
-        Blog.removeFeatured(req.user.username, function(){
-          Blog.createBlog(newBlogPost, function(err, blog){
-            if(err) console.log(err);
-            else res.redirect('/blogs/'+blog.post_id);
-          });
-        });
+        Blog.removeFeatured(req.user.username)
+          .then(function(){
+            Blog.createBlog(newBlogPost)
+            .then(function(blog){
+              res.redirect('/blogs/'+blog.post_id);
+            })
+            .catch(function(err){
+              console.log(err);
+            })
+          })
       }
       else{
-        Blog.createBlog(newBlogPost, function(err, blog){
-          if(err) console.log(err);
-          else res.redirect('/blogs/'+blog.post_id);
-        });
+        Blog.createBlog(newBlogPost)
+        .then(function(blog){
+          res.redirect('/blogs/'+blog.post_id);
+        })
+        .catch(function(err){
+          console.log(err);
+        })
       }//end else
     }//end else
   });
@@ -128,8 +150,8 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
 
 router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
   Promise.all([
-    PromiseUtil.deleteBlogById(req.params.id),
-    PromiseUtil.deleteAllCommentsOnBlogPost(req.params.id)
+    Blog.deleteBlogById(req.params.id),
+    _Comment.deleteAllCommentsOnBlogPost(req.params.id)
   ])
   .then(function(values){
     req.flash('success_msg', 'Successfully removed blog post ' + req.params.id + '.');

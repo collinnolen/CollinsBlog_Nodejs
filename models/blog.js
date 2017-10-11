@@ -81,5 +81,19 @@ module.exports.getUserBlogCountByUsername = function(username, callback){
 }
 
 module.exports.getUserRecentBlogs = function(username, numberOfBlogsToReturn, callback){
-  Blog.find({post_username: username},null,{ limit: numberOfBlogsToReturn,  sort:{'post_id': -1} }, callback );
+  Blog.find(
+    {post_username: username},
+    null,
+    {limit: numberOfBlogsToReturn, sort:{'post_id': -1}},
+    callback);
+}
+
+module.exports.getUserFollowingRecentBlogs = function(followingList, numberOfBlogsToReturn, skip, callback){
+  let indexesToSkip = (skip > 0) ? skip * numberOfBlogsToReturn : 0;
+  let query = {post_username : {$in : followingList}};
+  Blog.find(query, null, {
+    limit: numberOfBlogsToReturn,
+    skip: indexesToSkip,
+    sort:{'post_id': -1}},
+  callback);
 }

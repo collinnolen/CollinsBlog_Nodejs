@@ -7,7 +7,17 @@
     <h2 class="center">{{blog.post_title}}</h2>
     <p class="center">
       Posted: {{timeLong blog.post_id false}}  </br>
-      By: <a href="/users/profile/{{blog.post_username}}">{{blog.post_author}}</a> 
+      By: <a href="/users/profile/{{blog.post_username}}">{{blog.post_author}}</a></br>
+      {{#if user}}
+        {{#matchingUsers user.username blog.post_username}}
+        {{else}}
+          {{#checkFollowList ../user.following ../blog.post_username}}
+            <a href="#" data="{{../blog.post_username}}" class="unfollow-user">Unfollow</a>
+          {{else}}
+            <a href="/users/follow/{{../blog.post_username}}">Follow</a>
+          {{/checkFollowList}}
+        {{/matchingUsers}}
+      {{/if}}
     </p>
   </div>
 
@@ -27,7 +37,7 @@
           <div class="comment-author">-{{comment_author}},  <span>posted on {{time comment_timeposted true}}</span></div>
           <div class="comment-buttons">
           {{#if ../user}}
-            {{#matchingUsers comment_username ../user}}
+            {{#matchingUsers comment_username ../user.username}}
               <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="delete-comment-button">Delete</a>
               <a href="#" data="{{../comment_timeposted}},{{../../blog.post_id}}" class="edit-comment-button">Edit</a>
             {{else}}

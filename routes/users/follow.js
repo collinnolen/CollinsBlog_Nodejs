@@ -5,11 +5,9 @@ const router = express.Router();
 const QueryUtility = require('../../modules/queryUtility.js');
 const Auth = require('../../middleware/authentication.js');
 const FileUtility = require('../../modules/fileUtility.js');
-const PromiseUtil = require('../../modules/promises.js');
 const Util = require('../../modules/generalUtilities.js');
+const User = require('../../modules/promises/userPromises.js');
 
-//Mongoose Models
-const User = require('../../models/user.js');
 
 router.get('/:user_username', Auth.ensureAuthenticated, function(req, res){
   let followUser = req.params.user_username;
@@ -23,8 +21,8 @@ router.get('/:user_username', Auth.ensureAuthenticated, function(req, res){
 
   //fetch both user and user-to-follow from database.
   Promise.all([
-    PromiseUtil.getUserByUsername(followUser),
-    PromiseUtil.getUserByUsername(currentUser)
+    User.getUserByUsername(followUser),
+    User.getUserByUsername(currentUser)
   ])
   //fetch success
   .then((values) => {
@@ -40,7 +38,7 @@ router.get('/:user_username', Auth.ensureAuthenticated, function(req, res){
       res.redirect('back');
     }
     else{
-      PromiseUtil.followUserByUsername(userToFollow, currentUser)
+      User.followUserByUsername(userToFollow, currentUser)
         .then(() =>{
           req.flash('success_msg', 'You are now following user ' + userToFollow + '.');
           res.redirect('back');
@@ -63,7 +61,7 @@ router.delete('/:user_username', function(req, res){
   let userToUnfollow = req.params.user_username;
   let currentUser = req.user.username;
 
-  PromiseUtil.unfollowUserByUsername(userToUnfollow, currentUser)
+  User.unfollowUserByUsername(userToUnfollow, currentUser)
     .then(() => {
       req.flash('success_msg', 'You are no longer following user ' + userToUnfollow + '.');
       res.send('success');

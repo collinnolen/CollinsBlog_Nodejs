@@ -9,12 +9,12 @@ const QueryUtility = require('../modules/queryUtility.js');
 const Auth = require('../middleware/authentication.js');
 const Mailer = require('../modules/mailer.js');
 const FileUtility = require('../modules/fileUtility.js');
-const PromiseUtil = require('../modules/promises.js');
+const User = require('../modules/promises/userPromises.js');
+const Blog = require('../modules/promises/blogPromises.js');
 
 //Mongoose Models
-const User = require('../models/user.js');
-const Blog = require('../models/blog.js');
 const UnverifiedUser = require('../models/unverifiedUser.js');
+const UserModel = require('../models/user.js');
 
 // //Variables
 
@@ -48,7 +48,7 @@ router.post('/register', function(req, res){
       });
     }
     else{
-      Promise.all([PromiseUtil.getUserByEmail(email), PromiseUtil.getUserByUsername(username)])
+      Promise.all([User.getUserByEmail(email), User.getUserByUsername(username)])
         .then(function(values){
           console.log(values);
           if(values[0] === 'null' && values[1] === 'null'){
@@ -90,7 +90,7 @@ router.post('/register', function(req, res){
 router.get('/registerNewUser', function(req, res){
   var unverifiedUser = UnverifiedUser.getUnverifiedUserByUrl(req.query.url, function(err, user){
 
-    var verifiedUser = new User({
+    var verifiedUser = new UserModel({
       first_name: user.first_name,
       last_name: user.last_name,
       username: user.username,
@@ -99,13 +99,16 @@ router.get('/registerNewUser', function(req, res){
       password: user.password
     });
 
-    User.createUser(verifiedUser, function(err, user){
-      if(err) throw err;
-      else{
+    User.createUser(verifiedUser)
+      .then(function(user){
         req.flash('success_msg', 'You have successfully verified your account.');
         res.redirect('/users/login');
-      }
-    });
+      })
+      .catch(function(err){
+        console.log(err);
+      })
+
+
 
     UnverifiedUser.removeUnverifiedUserByUrl(req.query.url, function(){
         if(err) console.log(err);
@@ -150,10 +153,10 @@ router.get('/profile/:param1', function(req, res){
   let username = (req.user === undefined) ? '' : req.user.username;
 
   Promise.all([
-    PromiseUtil.getUserRecentBlogs(req.params.param1, 5),
-    PromiseUtil.getUserByUsername(req.params.param1),
-    PromiseUtil.getUserFeaturedBlog(req.params.param1),
-    PromiseUtil.getUserByUsername(username)
+    Blog.getUserRecentBlogs(req.params.param1, 5),
+    User.getUserByUsername(req.params.param1),
+    Blog.getUserFeaturedBlog(req.params.param1),
+    User.getUserByUsername(username)
    ])
     .then(function(values){
       res.render('user/profile/userProfile', {
@@ -174,32 +177,41 @@ router.get('/profile/:param1', function(req, res){
 //passport functions
 passport.use(new LocalStrategy(
   function(email, password, done) {
-    User.getUserByEmail(email, function(err, user){
-      if(err) console.log(err); //todo
-      if(!user){
-        return done(null, false, {message: 'Invalid email/password.'})
-      }
-
-      User.comparePassword(password, user.password, function(err, isMatch){
-        if(err) console.log(err); //todo
-        if(isMatch){
-          return done(null, user);
-        }
-        else{
+    User.getUserByEmail(email)
+      .then(function(user){
+        if(!user){
           return done(null, false, {message: 'Invalid email/password.'})
         }
-    });
-  });
-}));
+
+        User.comparePassword(password, user.password)
+          .then(function(isMatch){
+            if(isMatch)
+              return done(null, user);
+            else
+              return done(null, false, {message: 'Invalid email/password.'})
+          })
+          .catch(function(err){
+            console.log(err);
+          })
+      })//end then
+      .catch(function(err){
+        console.log(err);
+      })//end catch
+  }
+));
+
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  User.getUserById(id, function(err, user) {
-    done(err, user);
-  });
+  User.getUserById(id).then(function(user){
+    done(null, user);
+  })
+  .catch(function(){
+    console.log(err);
+  })
 });
 
 

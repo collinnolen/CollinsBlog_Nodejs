@@ -25,6 +25,23 @@
   background-color:#F0F0F0;
 }
 
+.follow-button-container{
+  display: inline-block;
+}
+
+.follow-button-container a, button{
+  margin-top: 3rem;
+  display: inline-block;
+}
+
+.card-img{
+  margin-bottom: 20px;
+}
+
+.card-text{
+  padding: 5px;
+}
+
 .card-block{
   padding: 5px;
 }
@@ -32,6 +49,10 @@
 .link-container{
   margin: auto;
   text-align:center;
+}
+
+#pageUser-title{
+  font-size: 4rem;
 }
 
 .card-block a {
@@ -42,5 +63,8 @@
 }
 
 .profile-header{
-  width:100%;
+  width: 100%;
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 10px;
 }
