@@ -1,8 +1,6 @@
 .blog-card{
   position:relative;
   display: inline-block;
-
-  max-width: 20rem;
 }
 
 .card-block{

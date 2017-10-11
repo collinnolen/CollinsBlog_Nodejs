@@ -7,7 +7,7 @@
     <h2 class="center">{{blog.post_title}}</h2>
     <p class="center">
       Posted: {{timeLong blog.post_id false}}  </br>
-      By: {{blog.post_author}}
+      By: <a href="/users/profile/{{blog.post_username}}">{{blog.post_author}}</a> 
     </p>
   </div>
 

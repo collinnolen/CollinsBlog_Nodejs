@@ -1,0 +1,16 @@
+.ul_label{
+  background-color: #F0F0F0;
+  font-size: 2rem;
+}
+
+.unfollow-user{
+
+}
+
+.list-group-container{
+  width:100%;
+  display:inline-block;
+  overflow: auto;
+  white-space: nowrap;
+  margin:0px auto;
+}

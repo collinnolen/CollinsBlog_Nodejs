@@ -1,0 +1,19 @@
+<div class="follow-container">
+  <div class="card">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item ul_label center"><strong>Users You Follow</strong></li>
+      {{#each following}}
+      <li class="list-group-item">
+        <div class="list-group-container">
+          <div class="float_left">
+            <a href="/users/profile/{{this}}">{{this}}</a>
+          </div>
+          <div class="float_right">
+            <button type="button" class="unfollow-user btn btn-danger" data="{{this}}">Unfollow</button>
+          </div>
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

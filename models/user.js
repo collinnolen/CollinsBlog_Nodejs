@@ -19,6 +19,9 @@ var UserSchema = mongoose.Schema({
   },
   password:{
     type: String
+  },
+  following:{
+    type:Array, default: []
   }
 }, {collection: 'users'});
 
@@ -50,6 +53,16 @@ module.exports.getUserByUsername = function(username, callback){
   var query = {username: username};
   User.findOne(query, callback);
 }//end getUserByUsername
+
+module.exports.followUserByUsername = function(userToFollow, currentUser, callback){
+  var query = {username: currentUser}
+  User.update(query, {$push: {'following' : userToFollow}}, callback);
+}
+
+module.exports.unfollowUserByUsername = function(userToUnfollow, currentUser, callback){
+  var query = {username: currentUser}
+  User.update(query, {$pull: {'following' : userToUnfollow}}, callback);
+}
 
 module.exports.comparePassword = function(canidatePass, hash, callback){
   bcrypt.compare(canidatePass, hash, function(err, isMatch) {

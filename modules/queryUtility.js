@@ -1,5 +1,3 @@
-
-
 module.exports.redirectEncodeQueryBuilder = function(unEncodedUrl){
   if(unEncodedUrl === '/logout')
     return '';

@@ -58,4 +58,18 @@ router.get('/myblogs', Auth.ensureAuthenticated, function(req, res){
     });
 });
 
+router.get('/following', Auth.ensureAuthenticated, function(req, res){
+  PromiseUtil.getUserByUsername(req.user.username)
+    .then((user) =>{
+      res.render('user/dashboard/following',{
+        script: 'followingScript',
+        stylesheet: 'user/dashboard/following',
+        following: user.following
+      });
+    })
+    .catch((error) =>{
+      console.log(error);
+    })
+})
+
 module.exports = router;

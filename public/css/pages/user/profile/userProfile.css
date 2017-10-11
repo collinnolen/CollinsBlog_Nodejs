@@ -24,3 +24,19 @@
   text-align:center;
   background-color:#F0F0F0;
 }
+
+.card-block{
+  padding: 5px;
+}
+
+.link-container{
+  margin: auto;
+  text-align:center;
+}
+
+.card-block a {
+  text-align:center;
+  display:inline-block;
+  margin: 10px;
+  width:20%;
+}

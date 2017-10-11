@@ -152,7 +152,6 @@ router.get('/profile/:param1', function(req, res){
     PromiseUtil.getUserFeaturedBlog(req.params.param1)
    ])
     .then(function(values){
-      console.log(values[2]);
       res.render('user/profile/userProfile', {
         stylesheet: 'user/profile/userProfile',
         blogs: values[0],

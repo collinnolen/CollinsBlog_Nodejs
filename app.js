@@ -25,6 +25,7 @@ const blogs = require('./routes/blogs');
 const comments = require('./routes/comments');
 const dashboard = require('./routes/users/dashboard');
 const images = require('./routes/images');
+const follow = require('./routes/users/follow');
 
 // // Init Application
  const app = express();
@@ -127,6 +128,7 @@ app.use('/blogs', blogs);
 app.use('/comments', comments);
 app.use('/users/dashboard', dashboard);
 app.use('/images', images);
+app.use('/users/follow', follow);
 
 //set Port
 var port = process.env.PORT || 3000;

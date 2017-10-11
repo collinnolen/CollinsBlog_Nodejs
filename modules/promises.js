@@ -5,6 +5,32 @@ const User = require('../models/user.js');
 const numberOfCommentsToShow = 10;
 const myBlogs_NumberOfBlogsToDisplay = 10;
 
+module.exports.followUserByUsername = function(userToFollow, userFollowing){
+  return new Promise(function(resolve, reject){
+    User.followUserByUsername(userToFollow, userFollowing, function(err){
+      if(err) reject(err);
+      else resolve('Success');
+    })
+  })
+}
+
+module.exports.unfollowUserByUsername = function(userToUnfollow, userUnfollowing){
+  return new Promise(function(resolve, reject){
+    User.unfollowUserByUsername(userToUnfollow, userUnfollowing, function(err){
+      if(err) reject(err);
+      else resolve('Success');
+    })
+  })
+}
+
+module.exports.getUserFollowingList = function(username){
+  return new Promise(function(resolve, reject){
+    User.getUserFollowingList(username, function(err, list){
+      if(err) reject(err);
+      else resolve(list);
+    })
+  })
+}
 
 module.exports.getFeaturedUser = function(){
   return new Promise(function(resolve, reject){
@@ -14,7 +40,6 @@ module.exports.getFeaturedUser = function(){
     })
   });
 }
-
 
 module.exports.getUserByEmail = function(email){
   return new Promise(function(resolve, reject){

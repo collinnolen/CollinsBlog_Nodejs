@@ -1,6 +1,6 @@
 <div class="" id="user-container">
   <div class="row">
-
+    <a class="btn btn-outline-primary" href="/users/follow/{{user.username}}">Follow {{user.first_name}}</a>
   </div>
 
   <div class="row">
@@ -12,7 +12,10 @@
         <img src="/images/{{featblog.post_id}}" alt="" class="card-img">
         <div class="card-block">
           <h4 class="card-title">{{featblog.post_title}}</h4>
-          <p class="card-text">{{shortText 200 featblog.post_body}}</p>
+          <p class="card-text">{{shortText 300 featblog.post_body}}</p>
+          <div class="link-container">
+            <a href="/blogs/{{featblog.post_id}}" class="btn btn-primary">Go to Blog</a>
+          </div>
         </div>
       </div>
     </div>
