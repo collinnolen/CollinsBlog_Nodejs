@@ -11,6 +11,7 @@ const Mailer = require('../modules/mailer.js');
 const FileUtility = require('../modules/fileUtility.js');
 const User = require('../modules/promises/userPromises.js');
 const Blog = require('../modules/promises/blogPromises.js');
+const Val = require('../middleware/validation.js');
 
 //Mongoose Models
 const UnverifiedUser = require('../models/unverifiedUser.js');
@@ -24,7 +25,7 @@ router.get('/register', function(req, res){
   res.render('user/register', {stylesheet: 'user/register'});
 });
 
-router.post('/register', function(req, res){
+router.post('/register', Val.newUser, function(req, res){
   var firstname = req.body.firstname;
   var lastname = req.body.lastname;
   var username = req.body.username;
@@ -32,65 +33,45 @@ router.post('/register', function(req, res){
   var password = req.body.password;
   var password_2 = req.body.password2;
 
-  req.checkBody('firstname', 'First Name is required').notEmpty();
-  req.checkBody('lastname', 'First Name is required').notEmpty();
-  req.checkBody('username', 'A username is required').notEmpty();
-  req.checkBody('email', 'First Name is required').notEmpty();
-  req.checkBody('email', 'Invalid Email address').isEmail();
-  req.checkBody('password', 'Password is required').notEmpty();
-  req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
-
-  req.getValidationResult().then(function(result){
-    if(!result.isEmpty()){
-      var errors = result.array().map(function (elem) { return elem.msg; });
-      res.render('user/register',{
-        errors:errors
-      });
-    }
-    else{
-      Promise.all([User.getUserByEmail(email), User.getUserByUsername(username)])
-        .then(function(values){
-          console.log(values);
-          if(values[0] === 'null' && values[1] === 'null'){
-            var newUnverifiedUser = new UnverifiedUser({
-              first_name: firstname,
-              last_name: lastname,
-              username: username,
-              email: email,
-              title: 'member',
-              password: password,
-              url: randomstring.generate(64)
-            });
-
-            UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
-              if(err) throw err;
-              else Mailer.sendVerifingEmail(user);
-            });
-
-            req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
-            res.redirect('/users/login');
-          }
-          else if(values[0] === 'null'){
-            req.flash('error_msg', 'The username you wish to use is already in use. Please use a different username.');
-            res.redirect('/users/register');
-          }
-          else{
-            req.flash('error_msg', 'The email you wish to use is already in use. Please use a different email address.');
-            res.redirect('/users/register');
-
-          }
-        })
-        .catch(function(err){
-          console.log(err);
+  Promise.all([User.getUserByEmail(email), User.getUserByUsername(username)])
+    .then(function(values){
+      if(values[0] === 'null' && values[1] === 'null'){
+        var newUnverifiedUser = new UnverifiedUser({
+          first_name: firstname,
+          last_name: lastname,
+          username: username,
+          email: email,
+          title: 'member',
+          password: password,
+          url: randomstring.generate(64)
         });
-    }
-  });
+
+        UnverifiedUser.createUnverifiedUser(newUnverifiedUser, function(err, user){
+          if(err) throw err;
+          else Mailer.sendVerifingEmail(user);
+        });
+
+        req.flash('success_msg', 'You have successfully registered, please go to your email account and click the link to verify your account.');
+        res.redirect('/users/login');
+      }
+      else if(values[0] === 'null'){
+        req.flash('error_msg', 'The username you wish to use is already in use. Please use a different username.');
+        res.redirect('/users/register');
+      }
+      else{
+        req.flash('error_msg', 'The email you wish to use is already in use. Please use a different email address.');
+        res.redirect('/users/register');
+      }
+    })
+    .catch(function(err){
+      console.log(err);
+    });
 });
 
 router.get('/registerNewUser', function(req, res){
-  var unverifiedUser = UnverifiedUser.getUnverifiedUserByUrl(req.query.url, function(err, user){
+  let unverifiedUser = UnverifiedUser.getUnverifiedUserByUrl(req.query.url, function(err, user){
 
-    var verifiedUser = new UserModel({
+    let verifiedUser = new UserModel({
       first_name: user.first_name,
       last_name: user.last_name,
       username: user.username,
@@ -106,9 +87,7 @@ router.get('/registerNewUser', function(req, res){
       })
       .catch(function(err){
         console.log(err);
-      })
-
-
+      });
 
     UnverifiedUser.removeUnverifiedUserByUrl(req.query.url, function(){
         if(err) console.log(err);

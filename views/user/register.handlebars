@@ -6,14 +6,6 @@
     <p>You are already logged in.</p>
   {{else}}
 
-    {{#if errors}}
-      {{#each errors}}
-        <div class="alert alert-danger">
-          {{msg}}
-        </div>
-      {{/each}}
-    {{/if}}
-
     <form action="/users/register" method="post">
       <div class="form-group">
         <label>First name</label>

@@ -27,6 +27,7 @@
   <div class="row">
     <div id="ative-post" class="col-lg-8">
       <div class="card">
+        {{#if featblog}}
         <div class="card-block" id="featured-header">
           <Strong>Featured Blog</Strong>
         </div>
@@ -38,10 +39,14 @@
             <a href="/blogs/{{featblog.post_id}}" class="btn btn-primary">Go to Blog</a>
           </div>
         </div>
+        {{else}}
+        <p class="card-text center"><strong>This user does not have a featured blog.</strong></p>
+        {{/if}}
       </div>
     </div>
     <div id="blogs" class="col-lg-4">
       <div class="card">
+        {{#if blogs}}
         <ul class="list-group list-group-flush">
           <li class="list-group-item ul_label"><strong>Recent Blogs</strong></li>
           {{#each blogs}}
@@ -53,6 +58,9 @@
             </li>
           {{/each}}
         </ul>
+        {{else}}
+        <p class="card-text center"><strong>This user has yet to make a post!</strong></p>
+        {{/if}}
       </div>
     </div>
   </div>

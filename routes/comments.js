@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const validator = require('validator');
 const microtime = require('microtime');
 
 //middleware
@@ -12,12 +13,16 @@ const CommentModel = require('../models/comment.js')
 
 // posts comment to blog post with :id
 router.post('/:id', Auth.ensureAuthenticated, function(req, res){
-  var comment_timeposted = Number(microtime.now().toString().substr(0,13));
-  var comment_username = req.user.username;
-  var comment_body = req.body.comment;
-  var comment_author = req.user.first_name + ' ' + req.user.last_name;
+  let comment_timeposted = Number(microtime.now().toString().substr(0,13));
+  let comment_username = req.user.username;
+  let comment_body = req.body.comment;
+  let comment_author = req.user.first_name + ' ' + req.user.last_name;
 
   req.checkBody('comment', 'Comment can not be empty.').notEmpty();
+  req.check('comment', 'Comment can not be longer than 1000 characters.')
+    .isLength({min:1, max:1000});
+
+  let comment_sanatize = validator.escape(comment_body);
 
   req.getValidationResult().then(function(result){
     if(!result.isEmpty()){
@@ -32,7 +37,7 @@ router.post('/:id', Auth.ensureAuthenticated, function(req, res){
         comment_timeposted: comment_timeposted,
         comment_username: comment_username,
         comment_author: comment_author,
-        comment_body: comment_body
+        comment_body: comment_sanatize
       });
 
       _Comment.createComment(newComment)

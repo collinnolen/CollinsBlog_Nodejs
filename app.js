@@ -100,20 +100,21 @@ app.use(passport.session());
 
 // //Validator middleware
 app.use(expressValidator({
-  errorFormatter: function(param, msg, value){
-  var namespace = param.split('.'),
-  root = namespace.shift(),
-  formParam = root;
+    //Custom validators.
+    errorFormatter: function(param, msg, value){
+    var namespace = param.split('.'),
+    root = namespace.shift(),
+    formParam = root;
 
-  while(namespace.length){
-    formParam += '[' + namesapce.shift() + ']';
+    while(namespace.length){
+      formParam += '[' + namesapce.shift() + ']';
+    }
+    return {
+      param: formParam,
+      msg : msg,
+      value: value
+    }
   }
-  return {
-    param: formParam,
-    msg : msg,
-    value: value
-  };
-}
 }));
 
 // //Connect Flash

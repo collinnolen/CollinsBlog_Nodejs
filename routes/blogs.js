@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const microtime = require('microtime');
+const validator = require('validator');
 
 //middleware
 const Auth = require('../middleware/authentication.js');
+const Val = require('../middleware/validation.js');
 
 //custom modules
 const User = require('../modules/promises/userPromises.js');
 const Blog = require('../modules/promises/blogPromises.js');
 const _Comment = require('../modules/promises/commentPromises.js');
 const FileUtility = require('../modules/fileUtility.js');
+
 
 //models
 const BlogModel = require('../models/blog.js');
@@ -75,14 +78,14 @@ router.get('/:id', function(req, res){
     });
 });
 
-router.post('/', Auth.ensureAuthenticated, function(req, res){
-  var time = microtime.now().toString().substr(0,13);
-  var id = Number(time).toString(36); //base 36 to save url space.
-  var author = req.user.first_name + ' ' + req.user.last_name;
-  var username = req.user.username;
-  var title = req.body.title;
-  var body = req.body.body;
-  var featured;
+router.post('/', Auth.ensureAuthenticated, Val.newBlog, function(req, res){
+  let time = microtime.now().toString().substr(0,13);
+  let id = Number(time).toString(36); //base 36 to save url space.
+  let author = req.user.first_name + ' ' + req.user.last_name;
+  let username = req.user.username;
+  let title = req.body.title;
+  let body = req.body.body;
+  let featured;
 
   //assigns boolean to checkbox value
   if(req.body.featured)
@@ -90,52 +93,36 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
   else
     featured = false;
 
-  req.checkBody('body', 'Body of blog post is required.').notEmpty();
-  req.checkBody('title', 'Blog post must have a title.').notEmpty();
+  let body_sanitized = validator.escape(body);
+  let title_sanitized = validator.escape(title);
 
-  req.getValidationResult().then(function(result){
-    if(!result.isEmpty()){
-          var errors = result.array().map(function (elem) { return elem.msg; });
-          res.render('user/dashboard/createblog', { errors: errors });
-    }
-    else{
-      var newBlogPost= new BlogModel({
-        post_id : id,
-        post_author : author,
-        post_username : username,
-        post_title : title,
-        post_body : body,
-        post_featured : featured
-      });
+  var newBlogPost= new BlogModel({
+    post_id : id,
+    post_author : author,
+    post_username : username,
+    post_title : title_sanitized,
+    post_body : body_sanitized,
+    post_featured : featured
+  });
 
-      if(!req.files)
-        console.log('no files');
-      else {
-        Image.writeFileToServer(req.files.picture, username, id, 'BlogPicture', function(err, filename){
-          if(err) console.log(err);
-          Image.writeImageToDb(filename, username, id, function(err, filename){
-            if(err) console.log(err);
-            FileUtility.cleanUploadFiles(filename, function(err){
-              if(err) return console.log(err);
-              console.log('File deleted');
-            });
-          });
+  if(Object.keys(req.files).length === 0 && req.files.constructor === Object)
+    console.log('no files');
+  else {
+    Image.writeFileToServer(req.files.picture, username, id, 'BlogPicture', function(err, filename){
+      if(err) console.log(err);
+      Image.writeImageToDb(filename, username, id, function(err, filename){
+        if(err) console.log(err);
+        FileUtility.cleanUploadFiles(filename, function(err){
+          if(err) return console.log(err);
+          console.log('File deleted');
         });
-      }
+      });
+    });
+  }
 
-      if(featured === true){
-        Blog.removeFeatured(req.user.username)
-          .then(function(){
-            Blog.createBlog(newBlogPost)
-            .then(function(blog){
-              res.redirect('/blogs/'+blog.post_id);
-            })
-            .catch(function(err){
-              console.log(err);
-            })
-          })
-      }
-      else{
+  if(featured === true){
+    Blog.removeFeatured(req.user.username)
+      .then(function(){
         Blog.createBlog(newBlogPost)
         .then(function(blog){
           res.redirect('/blogs/'+blog.post_id);
@@ -143,9 +130,17 @@ router.post('/', Auth.ensureAuthenticated, function(req, res){
         .catch(function(err){
           console.log(err);
         })
-      }//end else
-    }//end else
-  });
+      })
+  }
+  else{
+    Blog.createBlog(newBlogPost)
+    .then(function(blog){
+      res.redirect('/blogs/'+blog.post_id);
+    })
+    .catch(function(err){
+      console.log(err);
+    })
+  }//end else
 });
 
 router.delete('/:id', Auth.ensureAuthenticated, function(req, res){
