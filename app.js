@@ -1,6 +1,6 @@
 const express = require('express');
-require('dotenv').config({path: '.env'})
 const path = require('path');
+require('dotenv').config({path: __dirname + '/.env'});
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const exphds = require('express-handlebars');
