@@ -2,13 +2,15 @@ const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
 const xoauth2 = require('xoauth2');
 
-var mailer = nodemailer.createTransport(smtpTransport({
-  service: 'gmail',
+var mailer = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_ACCOUNT,
     pass: process.env.EMAIL_PASS
   }
-}));
+});
 
 //sends email to specified email contianing link to verify an account.
 module.exports.sendVerifingEmail = function(user, callback){
