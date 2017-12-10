@@ -9,19 +9,19 @@
     <form action="/users/register" method="post">
       <div class="form-group">
         <label>First name</label>
-        <input type="text" class="form-control" placeholder="First Name" name="firstname">
+        <input type="text" class="form-control" placeholder="First Name" {{#if info}}value ="{{info.firstname}}" {{/if}} name="firstname">
       </div>
       <div class="form-group">
         <label>Last name</label>
-        <input type="text" class="form-control" placeholder="Last Name" name="lastname">
+        <input type="text" class="form-control" placeholder="Last Name" {{#if info}}value ="{{info.lastname}}" {{/if}}  name="lastname">
       </div>
       <div class="form-group">
         <label>Username</label>
-        <input type="text" class="form-control" placeholder="Username" name="username">
+        <input type="text" class="form-control" placeholder="Username" {{#if info}}value ="{{info.username}}" {{/if}} name="username">
       </div>
       <div class="form-group">
         <label>Email</label>
-        <input type="email" class="form-control" placeholder="Email" name="email">
+        <input type="email" class="form-control" placeholder="Email" {{#if info}}value ="{{info.email}}" {{/if}} name="email">
       </div>
       <div class="form-group">
         <label>Password</label>

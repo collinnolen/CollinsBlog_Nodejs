@@ -29,7 +29,13 @@ module.exports.newUser = function(req, res, next){
     if(!result.isEmpty()){
       var errors = result.array().map(function (elem) { return elem.msg; });
       res.render('user/register',{
-        errors:errors
+        errors:errors,
+        info:{
+          firstname : req.body.firstname,
+          lastname : req.body.lastname,
+          username : req.body.username,
+          email : req.body.email
+        }
       });
     }
     else{
