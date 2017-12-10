@@ -1,19 +1,14 @@
 const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 const xoauth2 = require('xoauth2');
 
-var mailer = nodemailer.createTransport({
+var mailer = nodemailer.createTransport(smtpTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_ACCOUNT,
-    pass: process.env.EMAIL_PASS,
-    xoauth2: xoauth2.createXOAuth2Generator({
-      user: process.env.EMAIL_ACCOUNT,
-      clientID: process.env.GOOGLE_OAUTH_CLIENT,
-      clientSecret: process.env.GOOGLE_OAUTH_SECRET,
-      refreshToken: process.env.GOOGLE_OAUTH_REFRESHTOKEN
-    })
+    pass: process.env.EMAIL_PASS
   }
-});
+}));
 
 //sends email to specified email contianing link to verify an account.
 module.exports.sendVerifingEmail = function(user, callback){
@@ -23,8 +18,8 @@ module.exports.sendVerifingEmail = function(user, callback){
     from: 'Collins Blog <no-reply.collins.blog.site@gmail.com>',
     to: user.email,
     subject: 'Verifying Email for Collins Blog',
-    text: 'Please follow this link to verify your account : ' + url,
-    html: 'Please follow this link to verify your account: </br>' + url
+    text: 'Please follow this link to verify your account : \n' + url,
+    html: 'Please follow this link to verify your account : \n' + '<a href="' + url + '">'+ url +'</a>'
   }
 
   mailer.sendMail(mailOptions, function(err, res){

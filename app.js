@@ -12,7 +12,6 @@ const LocalStrategy = require('passport-local');
 const mongo = require('mongodb');
 const mongoose = require('mongoose');
 const fileUpload = require('express-fileupload');
-const nodemailer = require('nodemailer');
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.DATABASE_URL, {useMongoClient:true});
 const db = mongoose.connection;
